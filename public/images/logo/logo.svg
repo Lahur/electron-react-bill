@@ -1,0 +1,7 @@
+<svg width="180" height="32" viewBox="0 0 180 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="8" fill="#465FFF"/>
+  <path d="M8.4 8.4C8.4 7.5 9.2 6.7 10.1 6.7C11 6.7 11.8 7.5 11.8 8.4V23.6C11.8 24.5 11 25.3 10.1 25.3C9.2 25.3 8.4 24.5 8.4 23.6V8.4Z" fill="white"/>
+  <path d="M14.7 15.2C14.7 14.2 15.5 13.5 16.4 13.5C17.4 13.5 18.1 14.2 18.1 15.2V23.6C18.1 24.5 17.4 25.3 16.4 25.3C15.5 25.3 14.7 24.5 14.7 23.6V15.2Z" fill="white" fill-opacity="0.9"/>
+  <path d="M21.1 11C21.1 10 21.8 9.3 22.7 9.3C23.7 9.3 24.4 10 24.4 11V23.6C24.4 24.5 23.7 25.3 22.7 25.3C21.8 25.3 21.1 24.5 21.1 23.6V11Z" fill="white" fill-opacity="0.7"/>
+  <text x="42" y="21" font-family="Outfit, sans-serif" font-size="16" font-weight="600" fill="#101828">electron-react-bill</text>
+</svg>

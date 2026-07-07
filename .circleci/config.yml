@@ -1,0 +1,56 @@
+version: 2.1
+
+jobs:
+
+  # ── Linux + Windows (same Wine-enabled builder image) ────────────────────────
+  build:
+    docker:
+      - image: electronuserland/builder:wine
+    steps:
+      - checkout
+      - run:
+          name: Set version from tag
+          command: |
+            [ -z "$CIRCLE_TAG" ] && { echo "Not a tag — skipping version bump."; exit 0; }
+            VERSION="${CIRCLE_TAG#v}"
+            sed -i "s/\"version\": \"[0-9.]*\"/\"version\": \"$VERSION\"/" package.json
+            echo "Version set to $VERSION"
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - run:
+          name: Build Linux packages
+          command: npm run release:linux
+      - run:
+          name: Build Windows installer
+          command: npm run release:win
+      - store_artifacts:
+          path: release
+          destination: bundles
+      - run:
+          name: Publish to GitHub Releases
+          command: |
+            [ -z "$CIRCLE_TAG" ] && { echo "Not a tag — skipping publish."; exit 0; }
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+              | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+            chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+              | tee /etc/apt/sources.list.d/github-cli.list
+            apt-get update -qq && apt-get install -y -qq gh
+            gh release create "$CIRCLE_TAG" --title "$CIRCLE_TAG" --generate-notes || true
+            gh release upload "$CIRCLE_TAG" \
+              release/*.deb \
+              release/*.AppImage \
+              release/*.rpm \
+              release/*.exe \
+              --clobber
+
+workflows:
+  build:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
