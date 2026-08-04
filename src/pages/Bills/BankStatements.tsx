@@ -53,7 +53,7 @@ export default function BankStatements() {
   return (
     <>
       <PageMeta
-        title="Bankovni izvodi | electron-react-bill"
+        title="Bankovni izvodi | Tehnomodus administracija"
         description="Popis uvezenih bankovnih izvoda."
       />
       <PageBreadcrumb pageTitle="Bankovni izvodi" />

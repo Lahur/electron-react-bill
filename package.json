@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-bill",
+  "name": "tehnomodus-administracija",
   "private": true,
   "version": "0.0.0",
-  "description": "Electron React Bill",
+  "description": "Tehnomodus administracija",
   "author": {
     "name": "Karlo Belavic",
     "email": "lahur.123@gmail.com"
@@ -64,8 +64,9 @@
     }
   },
   "build": {
-    "appId": "com.electronreactbill.app",
-    "productName": "Electron React Bill",
+    "appId": "com.tehnomodus.administracija",
+    "productName": "Tehnomodus administracija",
+    "desktopName": "tehnomodus-administracija",
     "files": [
       "dist/**/*",
       "electron/**/*",
@@ -79,7 +80,11 @@
         "AppImage",
         "deb",
         "rpm"
-      ]
+      ],
+      "executableArgs": [
+        "--no-sandbox"
+      ],
+      "syncDesktopName": true
     },
     "win": {
       "target": [

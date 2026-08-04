@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <>
       <PageMeta
-        title="Administracijska nadzorna ploča | electron-react-bill"
+        title="Administracijska nadzorna ploča | Tehnomodus administracija"
         description="Administracijska nadzorna ploča izrađena na temelju TailAdmin React/Tailwind predloška, pokretana demo podacima u Reduxu."
       />
       <div className="grid grid-cols-12 gap-4 md:gap-6">

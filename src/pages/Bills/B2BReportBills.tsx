@@ -51,7 +51,7 @@ export default function B2BReportBills() {
   return (
     <>
       <PageMeta
-        title="B2B prijave računa | electron-react-bill"
+        title="B2B prijave računa | Tehnomodus administracija"
         description="Popis prijavljenih B2B računa."
       />
       <PageBreadcrumb pageTitle="B2B prijave računa" />

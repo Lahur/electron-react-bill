@@ -78,7 +78,7 @@ export default function IngoingBills() {
   return (
     <>
       <PageMeta
-        title="Ulazni računi | electron-react-bill"
+        title="Ulazni računi | Tehnomodus administracija"
         description="Popis ulaznih računa."
       />
       <PageBreadcrumb pageTitle="Ulazni računi" />

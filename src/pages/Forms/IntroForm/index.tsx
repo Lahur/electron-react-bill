@@ -43,7 +43,7 @@ export default function IntroForm() {
 
     return <div>
         <PageMeta
-            title="Novi račun | electron-react-bill"
+            title="Novi račun | Tehnomodus administracija"
             description="Obrazac za provjeru OIB-a."
         />
         <PageBreadcrumb pageTitle="Novi račun" />

@@ -51,7 +51,7 @@ export default function B2COugoingBills() {
   return (
     <>
       <PageMeta
-        title="B2C izlazni računi | electron-react-bill"
+        title="B2C izlazni računi | Tehnomodus administracija"
         description="Popis izlaznih B2C (F1) računa."
       />
       <PageBreadcrumb pageTitle="B2C izlazni računi" />

@@ -64,7 +64,7 @@ export default function BillInfo() {
   return (
     <>
       <PageMeta
-        title="Podaci o računu | electron-react-bill"
+        title="Podaci o računu | Tehnomodus administracija"
         description="Detalji računa."
       />
       <PageBreadcrumb pageTitle="Podaci o računu" />
