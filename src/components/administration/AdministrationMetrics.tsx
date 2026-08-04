@@ -1,42 +1,44 @@
-import { useAppSelector } from "../../app/hooks";
-import { ArrowDownIcon, ArrowUpIcon, BoxIconLine, GroupIcon } from "../../icons";
-import Badge from "../ui/badge/Badge";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { fetchDashboardSummary } from "../../features/dashboard/dashboardSlice";
+import { CheckCircleIcon, TimeIcon } from "../../icons";
 
-const icons = [GroupIcon, BoxIconLine];
+const currencyFormatter = new Intl.NumberFormat("hr-HR", { style: "currency", currency: "EUR" });
 
 export default function AdministrationMetrics() {
-  const metrics = useAppSelector((state) => state.dashboard.metrics);
+  const dispatch = useAppDispatch();
+  const summary = useAppSelector((state) => state.dashboard.summary);
+
+  useEffect(() => {
+    dispatch(fetchDashboardSummary());
+  }, [dispatch]);
+
+  const cards = [
+    { label: "Prodaja plaćeno", value: summary.salesPaidTotal, Icon: CheckCircleIcon },
+    { label: "Prodaja neplaćeno", value: summary.salesUnpaidTotal, Icon: TimeIcon },
+    { label: "Nabava plaćeno", value: summary.purchasesPaidTotal, Icon: CheckCircleIcon },
+    { label: "Nabava neplaćeno", value: summary.purchasesUnpaidTotal, Icon: TimeIcon },
+  ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
-      {metrics.map((metric, index) => {
-        const Icon = icons[index];
-        return (
-          <div
-            key={metric.label}
-            className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
-          >
-            <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
-              <Icon className="text-gray-800 size-6 dark:text-white/90" />
-            </div>
-
-            <div className="flex items-end justify-between mt-5">
-              <div>
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  {metric.label}
-                </span>
-                <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                  {metric.value}
-                </h4>
-              </div>
-              <Badge color={metric.trend === "up" ? "success" : "error"}>
-                {metric.trend === "up" ? <ArrowUpIcon /> : <ArrowDownIcon />}
-                {metric.growth}
-              </Badge>
-            </div>
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
+      {cards.map(({ label, value, Icon }) => (
+        <div
+          key={label}
+          className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
+        >
+          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
+            <Icon className="text-gray-800 size-6 dark:text-white/90" />
           </div>
-        );
-      })}
+
+          <div className="mt-5">
+            <span className="text-sm text-gray-500 dark:text-gray-400">{label}</span>
+            <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
+              {currencyFormatter.format(value)}
+            </h4>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

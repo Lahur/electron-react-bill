@@ -3,7 +3,6 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
   setMobileSidebarOpen,
   setSidebarHovered,
-  setSubmenuOpen,
   toggleMobileSidebar,
   toggleSidebar,
   toggleSubmenu,
@@ -39,6 +38,5 @@ export function useSidebarState() {
     toggleMobileSidebar: () => dispatch(toggleMobileSidebar()),
     setHovered: (hovered: boolean) => dispatch(setSidebarHovered(hovered)),
     toggleSubmenu: (index: number) => dispatch(toggleSubmenu(index)),
-    closeSubmenu: () => dispatch(setSubmenuOpen(null)),
   };
 }

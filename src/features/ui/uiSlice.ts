@@ -14,6 +14,7 @@ interface UiState {
   isMobileSidebarOpen: boolean;
   isSidebarHovered: boolean;
   openSubmenuIndex: number | null;
+  pendingRequests: number;
 }
 
 const initialState: UiState = {
@@ -22,6 +23,7 @@ const initialState: UiState = {
   isMobileSidebarOpen: false,
   isSidebarHovered: false,
   openSubmenuIndex: 0,
+  pendingRequests: 0,
 };
 
 const uiSlice = createSlice({
@@ -47,8 +49,11 @@ const uiSlice = createSlice({
       state.openSubmenuIndex =
         state.openSubmenuIndex === action.payload ? null : action.payload;
     },
-    setSubmenuOpen(state, action: PayloadAction<number | null>) {
-      state.openSubmenuIndex = action.payload;
+    requestStarted(state) {
+      state.pendingRequests += 1;
+    },
+    requestFinished(state) {
+      state.pendingRequests = Math.max(0, state.pendingRequests - 1);
     },
   },
 });
@@ -60,7 +65,8 @@ export const {
   setMobileSidebarOpen,
   setSidebarHovered,
   toggleSubmenu,
-  setSubmenuOpen,
+  requestStarted,
+  requestFinished,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

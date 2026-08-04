@@ -3,10 +3,12 @@ import { ReactComponent as ChevronDownIcon } from "./chevron-down.svg?react";
 import { ReactComponent as HorizontaLDots } from "./horizontal-dots.svg?react";
 import { ReactComponent as GroupIcon } from "./group.svg?react";
 import { ReactComponent as BoxIconLine } from "./box-line.svg?react";
-import { ReactComponent as ArrowUpIcon } from "./arrow-up.svg?react";
-import { ReactComponent as ArrowDownIcon } from "./arrow-down.svg?react";
 import { ReactComponent as MoreDotIcon } from "./moredot.svg?react";
 import { ReactComponent as CalenderIcon } from "./calender-line.svg?react";
+import { ReactComponent as TimeIcon } from "./time.svg?react";
+import { ReactComponent as DocsIcon } from "./docs.svg?react";
+import { ReactComponent as BarcodeIcon } from "./barcode.svg?react";
+import { ReactComponent as CheckCircleIcon } from "./check-circle.svg?react";
 
 export {
   GridIcon,
@@ -14,8 +16,10 @@ export {
   HorizontaLDots,
   GroupIcon,
   BoxIconLine,
-  ArrowUpIcon,
-  ArrowDownIcon,
   MoreDotIcon,
   CalenderIcon,
+  TimeIcon,
+  DocsIcon,
+  BarcodeIcon,
+  CheckCircleIcon,
 };

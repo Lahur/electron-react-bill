@@ -18,4 +18,8 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['@react-jvectormap/core', '@react-jvectormap/world'],
   },
+  server: {
+    port: 5173,
+    strictPort: true,
+  },
 })

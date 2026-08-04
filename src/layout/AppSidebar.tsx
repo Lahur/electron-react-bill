@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router";
-import { ChevronDownIcon, GridIcon, HorizontaLDots } from "../icons";
+import { BoxIconLine, ChevronDownIcon, DocsIcon, GridIcon, HorizontaLDots } from "../icons";
 import { useSidebarState } from "../hooks/useSidebarState";
-import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -13,8 +12,24 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Administration", path: "/" }],
+    name: "Nadzorna ploča",
+    subItems: [{ name: "Administracija", path: "/" }],
+  },
+  {
+    icon: <BoxIconLine />,
+    name: "Računi",
+    subItems: [
+      { name: "Novi", path: "/bills/new" },
+      { name: "B2B Izlazni računi", path: "/bills/outgoing/b2b" },
+      { name: "B2C Izlazni računi", path: "/bills/outgoing/b2c" },
+      { name: "B2B Prijava računa", path: "/bills/outgoing/b2b-report" },
+      { name: "Ulazni računi", path: "/bills/ingoing" },
+    ],
+  },
+  {
+    icon: <DocsIcon />,
+    name: "Bankovni izvodi",
+    subItems: [{ name: "Pregled", path: "/bills/bank-statements" }],
   },
 ];
 
@@ -69,7 +84,7 @@ export default function AppSidebar() {
                   !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
                 }`}
               >
-                {showLabels ? "Menu" : <HorizontaLDots className="size-6" />}
+                {showLabels ? "Izbornik" : <HorizontaLDots className="size-6" />}
               </h2>
               <ul className="flex flex-col gap-4">
                 {navItems.map((nav, index) => (
@@ -129,7 +144,6 @@ export default function AppSidebar() {
             </div>
           </div>
         </nav>
-        {showLabels ? <SidebarWidget /> : null}
       </div>
     </aside>
   );

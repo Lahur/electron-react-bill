@@ -8,6 +8,7 @@ interface TableProps {
 interface TableRowProps {
   children: ReactNode;
   className?: string;
+  onClick?: () => void;
 }
 
 interface TableCellProps {
@@ -28,8 +29,12 @@ export function TableBody({ children, className = "" }: TableProps) {
   return <tbody className={className}>{children}</tbody>;
 }
 
-export function TableRow({ children, className = "" }: TableRowProps) {
-  return <tr className={className}>{children}</tr>;
+export function TableRow({ children, className = "", onClick }: TableRowProps) {
+  return (
+    <tr className={className} onClick={onClick}>
+      {children}
+    </tr>
+  );
 }
 
 export function TableCell({
