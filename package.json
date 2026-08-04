@@ -2,6 +2,12 @@
   "name": "electron-react-bill",
   "private": true,
   "version": "0.0.0",
+  "description": "Electron React Bill",
+  "author": {
+    "name": "Karlo Belavic",
+    "email": "lahur.123@gmail.com"
+  },
+  "homepage": "https://github.com/Lahur/electron-react-bill",
   "type": "module",
   "main": "electron/main.js",
   "scripts": {
