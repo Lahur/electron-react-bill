@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs/promises');
+const { createAuthManager } = require('./auth');
 
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
@@ -8,6 +9,11 @@ const isDev = !app.isPackaged;
 const apiBaseUrl = process.env.VITE_API_BASE_URL;
 
 let mainWindow;
+
+// Login opens in an in-app BrowserWindow rather than the system browser; the
+// redirect to electron-react-bill://callback is intercepted before it ever
+// navigates anywhere, so no OS-level protocol registration is needed.
+const authManager = createAuthManager({ getParentWindow: () => mainWindow });
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -57,6 +63,10 @@ function createWindow() {
     mainWindow = null;
   });
 }
+
+ipcMain.handle('auth:login', () => authManager.login());
+ipcMain.handle('auth:logout', () => authManager.logout());
+ipcMain.handle('auth:get-token', () => authManager.getToken());
 
 ipcMain.handle('dialog:open-bank-statement-files', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {

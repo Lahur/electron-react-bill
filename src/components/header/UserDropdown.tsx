@@ -1,19 +1,20 @@
 import { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAppSelector } from "../../app/hooks";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logout } = useAuth0();
+  const user = useAppSelector((state) => state.auth.user);
 
   function closeDropdown() {
     setIsOpen(false);
   }
 
-  function handleLogout() {
+  async function handleLogout() {
     closeDropdown();
-    logout({ logoutParams: { returnTo: window.location.origin } });
+    await window.electron.auth.logout();
+    window.location.reload();
   }
 
   return (

@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "../features/auth/authSlice";
 import uiReducer from "../features/ui/uiSlice";
 import dashboardReducer from "../features/dashboard/dashboardSlice";
 import B2BBillSlice from "../slices/B2BBillSlice.ts";
@@ -13,6 +14,7 @@ import { setDispatch } from "./storeAccessor";
 
 export const store = configureStore({
   reducer: {
+    auth: authReducer,
     ui: uiReducer,
     dashboard: dashboardReducer,
     b2b: B2BBillSlice,

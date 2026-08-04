@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useEffect, useRef } from "react";
 import { BrowserRouter, Route, Routes } from "react-router";
-import { setGetAccessTokenSilently } from "./app/authAccessor";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
+import { loginStarted, loginSucceeded, loginFailed } from "./features/auth/authSlice";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import AppLayout from "./layout/AppLayout";
@@ -18,12 +18,20 @@ import { useThemeSync } from "./hooks/useThemeSync";
 export default function App() {
   useThemeSync();
 
-  const { isLoading, isAuthenticated, error, loginWithRedirect, getAccessTokenSilently } =
-    useAuth0();
+  const dispatch = useAppDispatch();
+  const { isLoading, isAuthenticated, error } = useAppSelector((state) => state.auth);
+  const loginAttempted = useRef(false);
 
   useEffect(() => {
-    setGetAccessTokenSilently(getAccessTokenSilently);
-  }, [getAccessTokenSilently]);
+    if (loginAttempted.current) return;
+    loginAttempted.current = true;
+
+    dispatch(loginStarted());
+    window.electron.auth
+      .login()
+      .then((user) => dispatch(loginSucceeded(user)))
+      .catch((err) => dispatch(loginFailed(err instanceof Error ? err.message : "Login failed")));
+  }, [dispatch]);
 
   if (isLoading) {
     return (
@@ -34,11 +42,8 @@ export default function App() {
   }
 
   if (!isAuthenticated) {
-    loginWithRedirect();
     return error ? (
-      <div className="flex h-screen items-center justify-center text-error-500">
-        {error.message}
-      </div>
+      <div className="flex h-screen items-center justify-center text-error-500">{error}</div>
     ) : null;
   }
 
