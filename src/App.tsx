@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { HashRouter, Route, Routes } from "react-router";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { loginStarted, loginSucceeded, loginFailed } from "./features/auth/authSlice";
 import { ScrollToTop } from "./components/common/ScrollToTop";
@@ -48,7 +48,7 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <ScrollToTop />
       <LoadingSpinner />
       <Routes>
@@ -63,6 +63,6 @@ export default function App() {
           <Route path="/bills/:billType/:id" element={<BillInfo />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
