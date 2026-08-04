@@ -8,6 +8,7 @@
     "email": "lahur.123@gmail.com"
   },
   "homepage": "https://github.com/Lahur/electron-react-bill",
+  "desktopName": "tehnomodus-administracija",
   "type": "module",
   "main": "electron/main.js",
   "scripts": {
@@ -66,7 +67,6 @@
   "build": {
     "appId": "com.tehnomodus.administracija",
     "productName": "Tehnomodus administracija",
-    "desktopName": "tehnomodus-administracija",
     "files": [
       "dist/**/*",
       "electron/**/*",
