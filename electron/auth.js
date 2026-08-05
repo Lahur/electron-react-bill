@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { BrowserWindow } = require('electron');
+const { BrowserWindow, session: electronSession } = require('electron');
 const axios = require('axios');
 
 const REDIRECT_URI = 'electron-react-bill://callback';
@@ -130,8 +130,25 @@ function createAuthManager({ getParentWindow }) {
     return session.accessToken;
   }
 
-  function logout() {
+  async function logout() {
     session = null;
+
+    // login() runs in Electron's persistent default session, so Auth0's SSO
+    // cookie survives a plain in-memory logout and silently re-authenticates
+    // the next login() call. Remove it so the next login shows the real form.
+    try {
+      const cookies = await electronSession.defaultSession.cookies.get({ domain });
+      await Promise.all(
+        cookies.map((cookie) =>
+          electronSession.defaultSession.cookies.remove(
+            `http${cookie.secure ? 's' : ''}://${cookie.domain.replace(/^\./, '')}${cookie.path}`,
+            cookie.name,
+          ),
+        ),
+      );
+    } catch {
+      // best-effort cookie clear
+    }
   }
 
   return { login, logout, getToken };
