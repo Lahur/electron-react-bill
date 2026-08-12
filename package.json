@@ -19,8 +19,8 @@
     "electron": "electron .",
     "electron:dev": "concurrently -k \"vite\" \"wait-on tcp:5173 && electron . --no-sandbox\"",
     "electron:build": "tsc -b && vite build && electron-builder",
-    "release:linux": "tsc -b && vite build && electron-builder --linux AppImage deb rpm",
-    "release:win": "tsc -b && vite build && electron-builder --win nsis"
+    "release:linux": "tsc -b && vite build && electron-builder --linux AppImage deb rpm --publish never",
+    "release:win": "tsc -b && vite build && electron-builder --win nsis --publish never"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.12.0",
