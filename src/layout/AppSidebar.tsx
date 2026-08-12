@@ -31,6 +31,19 @@ const navItems: NavItem[] = [
     name: "Bankovni izvodi",
     subItems: [{ name: "Pregled", path: "/bills/bank-statements" }],
   },
+  {
+    icon: <DocsIcon />,
+    name: "POS transakcije",
+    subItems: [{ name: "Pregled", path: "/bills/pos-transactions" }],
+  },
+  {
+    icon: <DocsIcon />,
+    name: "Blagajnički izvještaji",
+    subItems: [
+      { name: "Pregled", path: "/bills/accounts-statements" },
+      { name: "Stanje blagajne", path: "/bills/cash-withdrawal-balances" },
+    ],
+  },
 ];
 
 export default function AppSidebar() {

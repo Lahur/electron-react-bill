@@ -16,9 +16,10 @@ function decodeIdToken(idToken) {
 }
 
 function createAuthManager({ getParentWindow }) {
-  const domain = process.env.VITE_AUTH0_DOMAIN;
-  const clientId = process.env.VITE_AUTH0_CLIENT_ID;
-  const audience = process.env.VITE_AUTH0_AUDIENCE;
+  const keycloakUrl = process.env.VITE_KEYCLOAK_URL;
+  const realm = process.env.VITE_KEYCLOAK_REALM;
+  const clientId = process.env.VITE_KEYCLOAK_CLIENT_ID;
+  const issuer = `${keycloakUrl}/realms/${realm}/protocol/openid-connect`;
 
   // Tokens are kept in memory only and are gone on quit — every launch requires a fresh login.
   let session = null;
@@ -29,12 +30,11 @@ function createAuthManager({ getParentWindow }) {
       const codeChallenge = base64url(crypto.createHash('sha256').update(codeVerifier).digest());
       const state = base64url(crypto.randomBytes(16));
 
-      const authorizeUrl = new URL(`https://${domain}/authorize`);
+      const authorizeUrl = new URL(`${issuer}/auth`);
       authorizeUrl.searchParams.set('response_type', 'code');
       authorizeUrl.searchParams.set('client_id', clientId);
       authorizeUrl.searchParams.set('redirect_uri', REDIRECT_URI);
       authorizeUrl.searchParams.set('scope', SCOPE);
-      authorizeUrl.searchParams.set('audience', audience);
       authorizeUrl.searchParams.set('code_challenge', codeChallenge);
       authorizeUrl.searchParams.set('code_challenge_method', 'S256');
       authorizeUrl.searchParams.set('state', state);
@@ -84,13 +84,16 @@ function createAuthManager({ getParentWindow }) {
             throw new Error('Invalid login callback');
           }
 
-          const response = await axios.post(`https://${domain}/oauth/token`, {
-            grant_type: 'authorization_code',
-            client_id: clientId,
-            code_verifier: codeVerifier,
-            code,
-            redirect_uri: REDIRECT_URI,
-          });
+          const response = await axios.post(
+            `${issuer}/token`,
+            new URLSearchParams({
+              grant_type: 'authorization_code',
+              client_id: clientId,
+              code_verifier: codeVerifier,
+              code,
+              redirect_uri: REDIRECT_URI,
+            }),
+          );
 
           const { access_token: accessToken, id_token: idToken, expires_in: expiresIn } = response.data;
           const claims = decodeIdToken(idToken);
@@ -133,11 +136,12 @@ function createAuthManager({ getParentWindow }) {
   async function logout() {
     session = null;
 
-    // login() runs in Electron's persistent default session, so Auth0's SSO
+    // login() runs in Electron's persistent default session, so Keycloak's SSO
     // cookie survives a plain in-memory logout and silently re-authenticates
     // the next login() call. Remove it so the next login shows the real form.
     try {
-      const cookies = await electronSession.defaultSession.cookies.get({ domain });
+      const cookieDomain = new URL(keycloakUrl).hostname;
+      const cookies = await electronSession.defaultSession.cookies.get({ domain: cookieDomain });
       await Promise.all(
         cookies.map((cookie) =>
           electronSession.defaultSession.cookies.remove(

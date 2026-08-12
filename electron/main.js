@@ -104,6 +104,42 @@ ipcMain.handle('dialog:open-order-document', async () => {
   };
 });
 
+ipcMain.handle('dialog:open-pos-transaction-bill', async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
+    title: 'Odaberite račun za POS transakciju',
+    filters: [{ name: 'PDF', extensions: ['pdf'] }],
+    properties: ['openFile'],
+  });
+
+  if (canceled || filePaths.length === 0) {
+    return null;
+  }
+
+  const filePath = filePaths[0];
+  return {
+    name: path.basename(filePath),
+    data: await fs.readFile(filePath),
+  };
+});
+
+ipcMain.handle('dialog:open-accounts-statement-bill', async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
+    title: 'Odaberite račun za blagajnički izvještaj',
+    filters: [{ name: 'PDF', extensions: ['pdf'] }],
+    properties: ['openFile'],
+  });
+
+  if (canceled || filePaths.length === 0) {
+    return null;
+  }
+
+  const filePath = filePaths[0];
+  return {
+    name: path.basename(filePath),
+    data: await fs.readFile(filePath),
+  };
+});
+
 app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {

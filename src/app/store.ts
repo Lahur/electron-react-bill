@@ -10,6 +10,9 @@ import BusinessEntitySlice from "../slices/BusinessEntitySlice.ts";
 import BillInfoSlice from "../slices/BillInfoSlice.ts";
 import DocumentSlice from "../slices/DocumentSlice.ts";
 import BankStatementSlice from "../slices/BankStatementSlice.ts";
+import PosTransactionSlice from "../slices/PosTransactionSlice.ts";
+import AccountsStatementSlice from "../slices/AccountsStatementSlice.ts";
+import CashWithdrawalBalanceSlice from "../slices/CashWithdrawalBalanceSlice.ts";
 import { setDispatch } from "./storeAccessor";
 
 export const store = configureStore({
@@ -24,7 +27,10 @@ export const store = configureStore({
     businessEntity: BusinessEntitySlice,
     billInfo: BillInfoSlice,
     document: DocumentSlice,
-    bankStatement: BankStatementSlice
+    bankStatement: BankStatementSlice,
+    posTransaction: PosTransactionSlice,
+    accountsStatement: AccountsStatementSlice,
+    cashWithdrawalBalance: CashWithdrawalBalanceSlice
   },
 });
 

@@ -11,6 +11,9 @@ import B2COugoingBills from "./pages/Bills/B2COugoingBills";
 import B2BReportBills from "./pages/Bills/B2BReportBills";
 import IngoingBills from "./pages/Bills/IngoingBills";
 import BankStatements from "./pages/Bills/BankStatements";
+import PosTransactions from "./pages/Bills/PosTransactions";
+import AccountsStatements from "./pages/Bills/AccountsStatements";
+import CashWithdrawalBalances from "./pages/Bills/CashWithdrawalBalances";
 import BillInfo from "./pages/Bills/BillInfo";
 import IntroForm from "./pages/Forms/IntroForm";
 import { useThemeSync } from "./hooks/useThemeSync";
@@ -59,6 +62,9 @@ export default function App() {
           <Route path="/bills/outgoing/b2b-report" element={<B2BReportBills />} />
           <Route path="/bills/ingoing" element={<IngoingBills />} />
           <Route path="/bills/bank-statements" element={<BankStatements />} />
+          <Route path="/bills/pos-transactions" element={<PosTransactions />} />
+          <Route path="/bills/accounts-statements" element={<AccountsStatements />} />
+          <Route path="/bills/cash-withdrawal-balances" element={<CashWithdrawalBalances />} />
           <Route path="/bills/new" element={<IntroForm />} />
           <Route path="/bills/:billType/:id" element={<BillInfo />} />
         </Route>
