@@ -111,9 +111,17 @@ function createAuthManager({ getParentWindow }) {
         }
       }
 
+      // Electron can fire both `will-redirect` and `will-navigate` for the same
+      // redirect to an unregistered custom scheme like electron-react-bill://,
+      // so guard against handling the callback (and exchanging the one-time
+      // authorization code) more than once.
+      let callbackHandled = false;
+
       function onRedirect(event, url) {
         if (url.startsWith(REDIRECT_URI)) {
           event.preventDefault();
+          if (callbackHandled) return;
+          callbackHandled = true;
           handleCallbackUrl(url);
         }
       }
