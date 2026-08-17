@@ -1,4 +1,5 @@
 import type { PosTransactionResponse } from "../models/dto/PosTransactionResponse";
+import type { PosTransactionGenerateAndSendRequest } from "../models/dto/PosTransactionGenerateAndSendRequest";
 import { createApiClient } from "./httpClient";
 
 const posTransactionApi = createApiClient("/pos-transaction");
@@ -16,6 +17,10 @@ export const PosTransactionService = {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
+  },
+
+  async generateAndSend(request: PosTransactionGenerateAndSendRequest): Promise<void> {
+    await posTransactionApi.post<void>("/generate-and-send", request);
   },
 };
 

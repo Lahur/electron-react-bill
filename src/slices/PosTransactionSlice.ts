@@ -1,4 +1,5 @@
 import type { PosTransactionResponse } from "../models/dto/PosTransactionResponse";
+import type { PosTransactionGenerateAndSendRequest } from "../models/dto/PosTransactionGenerateAndSendRequest";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { PosTransactionService } from "../services/PosTransactionService";
 
@@ -18,6 +19,11 @@ export const fetchPosTransactions = createAsyncThunk(
 export const uploadPosTransactionBill = createAsyncThunk(
     'posTransaction/upload',
     ({ id, file }: { id: string; file: File }) => PosTransactionService.upload(id, file),
+);
+
+export const generateAndSendPosTransactions = createAsyncThunk(
+    'posTransaction/generateAndSend',
+    (request: PosTransactionGenerateAndSendRequest) => PosTransactionService.generateAndSend(request),
 );
 
 const posTransactionSlice = createSlice({
