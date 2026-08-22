@@ -7,7 +7,7 @@ import Button from "../../components/ui/button/Button";
 import { Modal } from "../../components/ui/modal";
 import { useModal } from "../../hooks/useModal";
 import Label from "../../components/form/Label";
-import Input from "../../components/form/input/InputField";
+import EmailAutocompleteInput from "../../components/form/input/EmailAutocompleteInput";
 import Checkbox from "../../components/form/input/Checkbox";
 import { DocsIcon } from "../../icons";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -16,6 +16,7 @@ import {
   uploadPosTransactionBill,
   generateAndSendPosTransactions,
 } from "../../slices/PosTransactionSlice";
+import { fetchRecipients } from "../../slices/RecipientSlice";
 
 const dateTimeFormatter = new Intl.DateTimeFormat("hr-HR", {
   day: "2-digit",
@@ -36,6 +37,7 @@ function formatAmount(amount: number): string {
 export default function PosTransactions() {
   const dispatch = useAppDispatch();
   const transactions = useAppSelector((state) => state.posTransaction.transactions);
+  const recipientEmails = useAppSelector((state) => state.recipient.emails);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const { isOpen: isSendModalOpen, openModal: openSendModal, closeModal: closeSendModal } = useModal();
@@ -46,6 +48,10 @@ export default function PosTransactions() {
   useEffect(() => {
     dispatch(fetchPosTransactions());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isSendModalOpen) dispatch(fetchRecipients());
+  }, [isSendModalOpen, dispatch]);
 
   const handleUploadBill = async (id: string) => {
     const picked = await window.electron.openPosTransactionBill();
@@ -194,12 +200,12 @@ export default function PosTransactions() {
 
         <div className="mb-4">
           <Label htmlFor="pos-transactions-email">Email</Label>
-          <Input
-            type="email"
+          <EmailAutocompleteInput
             id="pos-transactions-email"
             placeholder="buyer@example.com"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={setEmail}
+            suggestions={recipientEmails}
           />
         </div>
 

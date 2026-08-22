@@ -13,6 +13,7 @@ import BankStatementSlice from "../slices/BankStatementSlice.ts";
 import PosTransactionSlice from "../slices/PosTransactionSlice.ts";
 import AccountsStatementSlice from "../slices/AccountsStatementSlice.ts";
 import CashWithdrawalBalanceSlice from "../slices/CashWithdrawalBalanceSlice.ts";
+import RecipientSlice from "../slices/RecipientSlice.ts";
 import { setDispatch } from "./storeAccessor";
 
 export const store = configureStore({
@@ -30,7 +31,8 @@ export const store = configureStore({
     bankStatement: BankStatementSlice,
     posTransaction: PosTransactionSlice,
     accountsStatement: AccountsStatementSlice,
-    cashWithdrawalBalance: CashWithdrawalBalanceSlice
+    cashWithdrawalBalance: CashWithdrawalBalanceSlice,
+    recipient: RecipientSlice
   },
 });
 

@@ -68,8 +68,23 @@ ipcMain.handle('auth:login', () => authManager.login());
 ipcMain.handle('auth:logout', () => authManager.logout());
 ipcMain.handle('auth:get-token', () => authManager.getToken());
 
+// showOpenDialog is modal to its parent window. If a second dialog is
+// requested while one is still open (e.g. two "select file" buttons clicked
+// in quick succession), it races the first and can silently fail to appear.
+// Queue all dialog requests so only one is ever open at a time.
+let dialogQueue = Promise.resolve();
+
+function showExclusiveOpenDialog(options) {
+  const run = dialogQueue.then(() => dialog.showOpenDialog(mainWindow, options));
+  dialogQueue = run.then(
+    () => undefined,
+    () => undefined,
+  );
+  return run;
+}
+
 ipcMain.handle('dialog:open-bank-statement-files', async () => {
-  const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
+  const { canceled, filePaths } = await showExclusiveOpenDialog({
     title: 'Odaberite bankovne izvode',
     filters: [{ name: 'Bankovni izvodi (camt.053)', extensions: ['xml', 'zip'] }],
     properties: ['openFile', 'multiSelections'],
@@ -88,7 +103,7 @@ ipcMain.handle('dialog:open-bank-statement-files', async () => {
 });
 
 ipcMain.handle('dialog:open-order-document', async () => {
-  const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
+  const { canceled, filePaths } = await showExclusiveOpenDialog({
     title: 'Odaberite dokument narudžbe',
     properties: ['openFile'],
   });
@@ -105,7 +120,7 @@ ipcMain.handle('dialog:open-order-document', async () => {
 });
 
 ipcMain.handle('dialog:open-pos-transaction-bill', async () => {
-  const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
+  const { canceled, filePaths } = await showExclusiveOpenDialog({
     title: 'Odaberite račun za POS transakciju',
     filters: [{ name: 'PDF', extensions: ['pdf'] }],
     properties: ['openFile'],
@@ -123,7 +138,7 @@ ipcMain.handle('dialog:open-pos-transaction-bill', async () => {
 });
 
 ipcMain.handle('dialog:open-accounts-statement-bill', async () => {
-  const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
+  const { canceled, filePaths } = await showExclusiveOpenDialog({
     title: 'Odaberite račun za blagajnički izvještaj',
     filters: [{ name: 'PDF', extensions: ['pdf'] }],
     properties: ['openFile'],

@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "../ui/modal";
 import Label from "../form/Label";
-import Input from "../form/input/InputField";
+import EmailAutocompleteInput from "../form/input/EmailAutocompleteInput";
 import Button from "../ui/button/Button";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { generateAndSendDocuments } from "../../slices/DocumentSlice";
+import { fetchRecipients } from "../../slices/RecipientSlice";
 import { billReportTypeLabels } from "../../models/enums/BillReportType";
 
 interface SendReportsModalProps {
@@ -15,9 +16,14 @@ interface SendReportsModalProps {
 export default function SendReportsModal({ isOpen, onClose }: SendReportsModalProps) {
   const dispatch = useAppDispatch();
   const reportItems = useAppSelector((state) => state.document.reportItems);
+  const recipientEmails = useAppSelector((state) => state.recipient.emails);
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOpen) dispatch(fetchRecipients());
+  }, [isOpen, dispatch]);
 
   async function handleSend() {
     setSendError(null);
@@ -63,12 +69,12 @@ export default function SendReportsModal({ isOpen, onClose }: SendReportsModalPr
 
       <div className="mb-4">
         <Label htmlFor="reports-email">Email</Label>
-        <Input
-          type="email"
+        <EmailAutocompleteInput
           id="reports-email"
           placeholder="buyer@example.com"
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          onChange={setEmail}
+          suggestions={recipientEmails}
         />
       </div>
 
