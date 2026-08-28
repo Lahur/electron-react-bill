@@ -8,4 +8,5 @@ export interface PosTransactionResponse {
   additionalRemittanceInfo: string;
   transactionDate: string;
   hasBill: boolean;
+  sentCount: number;
 }

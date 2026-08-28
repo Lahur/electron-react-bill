@@ -13,7 +13,7 @@ export interface ReportBillRequest {
   billId: number;
   profile: BillProfile;
   vatCategory: VatCategory;
-  reference: string;
+  orderNumber?: string;
   buyerName: string;
   buyerStreet: string;
   buyerCity: string;

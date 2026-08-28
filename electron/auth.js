@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const { BrowserWindow, session: electronSession } = require('electron');
 const axios = require('axios');
+const Sentry = require('@sentry/electron/main');
 
 const REDIRECT_URI = 'electron-react-bill://callback';
 const SCOPE = 'openid profile email';
@@ -158,8 +159,12 @@ function createAuthManager({ getParentWindow }) {
           ),
         ),
       );
-    } catch {
+    } catch (error) {
       // best-effort cookie clear
+      Sentry.captureException(error, {
+        level: 'warning',
+        mechanism: { type: 'auth.logout', handled: true },
+      });
     }
   }
 

@@ -15,6 +15,7 @@ import AccountsStatementSlice from "../slices/AccountsStatementSlice.ts";
 import CashWithdrawalBalanceSlice from "../slices/CashWithdrawalBalanceSlice.ts";
 import RecipientSlice from "../slices/RecipientSlice.ts";
 import { setDispatch } from "./storeAccessor";
+import { sentryMiddleware } from "./sentryMiddleware";
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ export const store = configureStore({
     cashWithdrawalBalance: CashWithdrawalBalanceSlice,
     recipient: RecipientSlice
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(sentryMiddleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

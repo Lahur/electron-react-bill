@@ -15,6 +15,7 @@ import type { ReportBillRequest } from "../../../models/dto/ReportBillRequest";
 import type { BillReviewResponse } from "../../../models/dto/BillReviewResponse";
 import { BillProfile, billProfileLabels } from "../../../models/enums/BillProfile";
 import { VatCategory, vatCategoryLabels } from "../../../models/enums/VatCategory";
+import { DocsIcon } from "../../../icons";
 import ReviewBill from "./ReviewBill.tsx";
 
 function toIsoDate(date: Date): string {
@@ -39,7 +40,7 @@ interface BillFormState {
     billTime: string;
     dueDate: string;
     note: string;
-    reference: string;
+    orderNumber: string;
     buyerOib: string;
     buyerName: string;
     buyerStreet: string;
@@ -58,7 +59,7 @@ const initialBillFormState: BillFormState = {
     billTime: "",
     dueDate: "",
     note: "",
-    reference: "",
+    orderNumber: "",
     buyerOib: "",
     buyerName: "",
     buyerStreet: "",
@@ -82,9 +83,16 @@ export default function B2BReportFormCard({ onCancel }: { onCancel: () => void }
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [pendingRequest, setPendingRequest] = useState<ReportBillRequest | null>(null);
     const [billReview, setBillReview] = useState<BillReviewResponse | null>(null);
+    const [orderDocument, setOrderDocument] = useState<File | null>(null);
 
     const setField = useCallback(<K extends keyof BillFormState>(field: K, value: BillFormState[K]) => {
         setForm((prev) => ({ ...prev, [field]: value }));
+    }, []);
+
+    const handlePickOrderDocument = useCallback(async () => {
+        const picked = await window.electron.openOrderDocument();
+        if (!picked) return;
+        setOrderDocument(new File([picked.data], picked.name));
     }, []);
 
     const handleBillDateChange = useCallback((dates: Date[]) => {
@@ -108,11 +116,11 @@ export default function B2BReportFormCard({ onCancel }: { onCancel: () => void }
         if (!form.billDate) newErrors.billDate = true;
         if (!form.billTime) newErrors.billTime = true;
         if (!form.dueDate) newErrors.dueDate = true;
-        if (!form.reference) newErrors.reference = true;
         if (form.baseAmount === "" || Number(form.baseAmount) < 0) newErrors.baseAmount = true;
         if (!form.vatCategory) newErrors.vatCategory = true;
         if (!form.billItemName) newErrors.billItemName = true;
         if (!form.billItemDescription) newErrors.billItemDescription = true;
+        if (orderDocument && !form.orderNumber) newErrors.orderNumber = true;
         if (!entity) {
             if (!form.buyerOib) newErrors.buyerOib = true;
             if (!form.buyerName) newErrors.buyerName = true;
@@ -137,7 +145,7 @@ export default function B2BReportFormCard({ onCancel }: { onCancel: () => void }
             billTime: form.billTime,
             dueDate: form.dueDate,
             note: form.note || undefined,
-            reference: form.reference,
+            orderNumber: form.orderNumber || undefined,
             buyerOib: entity ? entity.oib : form.buyerOib,
             buyerName: entity ? entity.name : form.buyerName,
             buyerStreet: entity ? entity.headquatersAddress : form.buyerStreet,
@@ -173,7 +181,7 @@ export default function B2BReportFormCard({ onCancel }: { onCancel: () => void }
         setSubmitting(true);
 
         try {
-            await dispatch(createBill(pendingRequest)).unwrap();
+            await dispatch(createBill({ request: pendingRequest, orderDocument })).unwrap();
             dispatch(resetBusinessEntityCheck());
             navigate("/bills/outgoing/b2b-report");
         } catch {
@@ -263,17 +271,6 @@ export default function B2BReportFormCard({ onCancel }: { onCancel: () => void }
                             {errors.dueDate && (
                                 <p className="mt-1.5 text-xs text-error-500">Datum dospijeća je obavezan.</p>
                             )}
-                        </div>
-                        <div>
-                            <Label htmlFor="reference">Poziv na broj</Label>
-                            <Input
-                                type="text"
-                                id="reference"
-                                value={form.reference}
-                                onChange={(e) => setField("reference", e.target.value)}
-                                error={errors.reference}
-                                hint={errors.reference ? "Poziv na broj je obavezan." : ""}
-                            />
                         </div>
                     </div>
 
@@ -393,6 +390,26 @@ export default function B2BReportFormCard({ onCancel }: { onCancel: () => void }
                             {errors.vatCategory && (
                                 <p className="mt-1.5 text-xs text-error-500">Kategorija PDV-a je obavezna.</p>
                             )}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <Label htmlFor="orderNumber">Referenca</Label>
+                            <Input
+                                type="text"
+                                id="orderNumber"
+                                value={form.orderNumber}
+                                onChange={(e) => setField("orderNumber", e.target.value)}
+                                error={errors.orderNumber}
+                                hint={errors.orderNumber ? "Referenca je obavezna kada je priložen dokument narudžbe." : ""}
+                            />
+                        </div>
+                        <div>
+                            <Label>Dokument narudžbe</Label>
+                            <Button type="button" size="sm" variant="outline" startIcon={<DocsIcon className="h-4 w-4" />} onClick={handlePickOrderDocument}>
+                                {orderDocument ? orderDocument.name : "Odaberite dokument"}
+                            </Button>
                         </div>
                     </div>
 

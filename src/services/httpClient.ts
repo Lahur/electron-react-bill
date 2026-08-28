@@ -1,4 +1,5 @@
 import axios from "axios";
+import * as Sentry from "@sentry/electron/renderer";
 import { getDispatch } from "../app/storeAccessor";
 import { getAccessTokenSilently } from "../app/authAccessor";
 import { requestStarted, requestFinished } from "../features/ui/uiSlice";
@@ -24,6 +25,26 @@ export function createApiClient(basePath: string) {
     },
     (error) => {
       getDispatch()(requestFinished());
+      // Every real API failure funnels through here, including the ones that
+      // component/thunk catch blocks swallow into local error state, so this
+      // is where handled HTTP errors are forwarded to Sentry. Non-HTTP failures
+      // (e.g. token retrieval throwing in the request interceptor) are left for
+      // the Redux middleware so they are only reported once.
+      if (axios.isAxiosError(error) && !axios.isCancel(error)) {
+        const { config, response } = error;
+        Sentry.captureException(error, {
+          mechanism: { type: "http.client", handled: true },
+          captureContext: {
+            tags: { source: "api", status: response?.status },
+            extra: {
+              method: config?.method?.toUpperCase(),
+              url: config ? `${config.baseURL ?? ""}${config.url ?? ""}` : undefined,
+              status: response?.status,
+              responseData: response?.data,
+            },
+          },
+        });
+      }
       return Promise.reject(error);
     },
   );

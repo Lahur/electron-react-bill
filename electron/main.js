@@ -1,7 +1,36 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs/promises');
+const Sentry = require('@sentry/electron/main');
 const { createAuthManager } = require('./auth');
+
+Sentry.init({
+  dsn: 'https://3ba4c0f6c910f9af7cb63951262803b0@o4511728439197696.ingest.de.sentry.io/4511987834028112',
+  // Uncaught exceptions, unhandled rejections and native crashes (main +
+  // renderer) are captured automatically. Handled errors thrown inside IPC
+  // handlers are forwarded by the `handle()` wrapper below.
+  ignoreErrors: [
+    // User closed the Keycloak popup / cancelled sign-in - not a fault.
+    'Login window closed before completing sign-in',
+  ],
+});
+
+// Wrap ipcMain.handle so any error thrown by a handler is reported to Sentry
+// before it is rejected back to the renderer (where a catch block may swallow
+// it silently).
+function handle(channel, listener) {
+  ipcMain.handle(channel, async (event, ...args) => {
+    try {
+      return await listener(event, ...args);
+    } catch (error) {
+      Sentry.captureException(error, {
+        mechanism: { type: 'ipc.handle', handled: true },
+        tags: { source: 'ipc', channel },
+      });
+      throw error;
+    }
+  });
+}
 
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
@@ -24,6 +53,11 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      // preload.js loads @sentry/electron/preload, which a sandboxed preload
+      // cannot require. The app already runs unsandboxed elsewhere
+      // (--no-sandbox in the dev script and the Linux build), so make it
+      // explicit and consistent here.
+      sandbox: false,
     },
   });
 
@@ -64,9 +98,9 @@ function createWindow() {
   });
 }
 
-ipcMain.handle('auth:login', () => authManager.login());
-ipcMain.handle('auth:logout', () => authManager.logout());
-ipcMain.handle('auth:get-token', () => authManager.getToken());
+handle('auth:login', () => authManager.login());
+handle('auth:logout', () => authManager.logout());
+handle('auth:get-token', () => authManager.getToken());
 
 // showOpenDialog is modal to its parent window. If a second dialog is
 // requested while one is still open (e.g. two "select file" buttons clicked
@@ -83,7 +117,7 @@ function showExclusiveOpenDialog(options) {
   return run;
 }
 
-ipcMain.handle('dialog:open-bank-statement-files', async () => {
+handle('dialog:open-bank-statement-files', async () => {
   const { canceled, filePaths } = await showExclusiveOpenDialog({
     title: 'Odaberite bankovne izvode',
     filters: [{ name: 'Bankovni izvodi (camt.053)', extensions: ['xml', 'zip'] }],
@@ -102,7 +136,7 @@ ipcMain.handle('dialog:open-bank-statement-files', async () => {
   );
 });
 
-ipcMain.handle('dialog:open-order-document', async () => {
+handle('dialog:open-order-document', async () => {
   const { canceled, filePaths } = await showExclusiveOpenDialog({
     title: 'Odaberite dokument narudžbe',
     properties: ['openFile'],
@@ -119,7 +153,7 @@ ipcMain.handle('dialog:open-order-document', async () => {
   };
 });
 
-ipcMain.handle('dialog:open-pos-transaction-bill', async () => {
+handle('dialog:open-pos-transaction-bill', async () => {
   const { canceled, filePaths } = await showExclusiveOpenDialog({
     title: 'Odaberite račun za POS transakciju',
     filters: [{ name: 'PDF', extensions: ['pdf'] }],
@@ -137,7 +171,7 @@ ipcMain.handle('dialog:open-pos-transaction-bill', async () => {
   };
 });
 
-ipcMain.handle('dialog:open-accounts-statement-bill', async () => {
+handle('dialog:open-accounts-statement-bill', async () => {
   const { canceled, filePaths } = await showExclusiveOpenDialog({
     title: 'Odaberite račun za blagajnički izvještaj',
     filters: [{ name: 'PDF', extensions: ['pdf'] }],

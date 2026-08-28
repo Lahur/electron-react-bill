@@ -28,6 +28,11 @@ export const AccountsStatementService = {
     });
     return response.data;
   },
+
+  async sync(accountsStatementIds: string[]): Promise<AccountsStatementResponse[]> {
+    const response = await accountsStatementApi.post<AccountsStatementResponse[]>("/sync", accountsStatementIds);
+    return response.data;
+  },
 };
 
 export default AccountsStatementService;

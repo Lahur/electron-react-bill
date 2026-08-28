@@ -9,9 +9,12 @@ import Button from "../../components/ui/button/Button";
 import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import DatePicker from "../../components/form/date-picker";
+import Checkbox from "../../components/form/input/Checkbox";
 import { DocsIcon } from "../../icons";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchAccountsStatements, createAccountsStatement, uploadAccountsStatementBill } from "../../slices/AccountsStatementSlice";
+import { fetchAccountsStatements, createAccountsStatement, uploadAccountsStatementBill, syncAccountsStatements } from "../../slices/AccountsStatementSlice";
+import { toggleReportItem } from "../../slices/DocumentSlice";
+import { BillReportType } from "../../models/enums/BillReportType";
 
 const dateFormatter = new Intl.DateTimeFormat("hr-HR", {
   day: "2-digit",
@@ -176,8 +179,11 @@ function CreateAccountsStatementForm({ onCancel, onCreated }: { onCancel: () => 
 export default function AccountsStatements() {
   const dispatch = useAppDispatch();
   const statements = useAppSelector((state) => state.accountsStatement.statements);
+  const reportItems = useAppSelector((state) => state.document.reportItems);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     dispatch(fetchAccountsStatements());
@@ -196,6 +202,22 @@ export default function AccountsStatements() {
     }
   };
 
+  const toggleSelection = (id: string, checked: boolean) => {
+    setSelectedIds((prev) => (checked ? [...prev, id] : prev.filter((selectedId) => selectedId !== id)));
+  };
+
+  const handleSync = async () => {
+    if (selectedIds.length === 0) return;
+
+    setSyncing(true);
+    try {
+      await dispatch(syncAccountsStatements(selectedIds)).unwrap();
+      setSelectedIds([]);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   return (
     <>
       <PageMeta
@@ -211,7 +233,10 @@ export default function AccountsStatements() {
         />
       ) : (
         <>
-          <div className="mb-4 flex justify-end">
+          <div className="mb-4 flex justify-end gap-3">
+            <Button size="sm" variant="outline" onClick={handleSync} disabled={syncing || selectedIds.length === 0}>
+              {syncing ? "Sinkronizacija..." : `Sinkroniziraj${selectedIds.length > 0 ? ` (${selectedIds.length})` : ""}`}
+            </Button>
             <Button size="sm" onClick={() => setShowCreateForm(true)}>
               Kreiraj izvještaj
             </Button>
@@ -221,6 +246,8 @@ export default function AccountsStatements() {
               <Table>
                 <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
                   <TableRow>
+                    <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                    </TableCell>
                     <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
                       Opis
                     </TableCell>
@@ -233,12 +260,28 @@ export default function AccountsStatements() {
                     <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
                       Račun
                     </TableCell>
+                    <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                      Status
+                    </TableCell>
+                    <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                      Poslano
+                    </TableCell>
+                    <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                      Radnje
+                    </TableCell>
                   </TableRow>
                 </TableHeader>
 
                 <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
                   {statements.map((statement) => (
                     <TableRow key={statement.id}>
+                      <TableCell className="py-3">
+                        <Checkbox
+                          checked={selectedIds.includes(statement.id)}
+                          onChange={(checked) => toggleSelection(statement.id, checked)}
+                          disabled={!!statement.cashWithdrawalBalanceIds && statement.cashWithdrawalBalanceIds.length > 0}
+                        />
+                      </TableCell>
                       <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                         {statement.description}
                       </TableCell>
@@ -264,6 +307,42 @@ export default function AccountsStatements() {
                             {uploadingId === statement.id ? "Učitavanje..." : "Učitaj račun"}
                           </Button>
                         )}
+                      </TableCell>
+                      <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                        {statement.cashWithdrawalBalanceIds && statement.cashWithdrawalBalanceIds.length > 0 ? (
+                          <Badge size="sm" color="success">
+                            Proveden
+                          </Badge>
+                        ) : (
+                          <Badge size="sm" color="error">
+                            Ne proveden
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                        {statement.sentCount}
+                      </TableCell>
+                      <TableCell className="py-3">
+                        <button
+                          type="button"
+                          aria-label="Označi za slanje dokumenta"
+                          onClick={() => {
+                            dispatch(
+                              toggleReportItem({
+                                id: statement.id,
+                                billId: statement.description,
+                                type: BillReportType.ACCOUNTS_STATEMENT,
+                              }),
+                            );
+                          }}
+                          className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${
+                            reportItems.some((item) => item.id === statement.id)
+                              ? "border-brand-500 bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400"
+                              : "border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+                          }`}
+                        >
+                          <DocsIcon className="h-5 w-5" />
+                        </button>
                       </TableCell>
                     </TableRow>
                   ))}

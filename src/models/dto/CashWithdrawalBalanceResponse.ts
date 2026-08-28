@@ -7,4 +7,5 @@ export interface CashWithdrawalBalanceResponse {
   additionalRemittanceInfo: string;
   transactionDate: string;
   accountsStatementIds: string[];
+  sentCount: number;
 }

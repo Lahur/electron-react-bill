@@ -5,4 +5,5 @@ export interface AccountsStatementResponse {
   description: string;
   hasBill: boolean;
   cashWithdrawalBalanceIds: string[];
+  sentCount: number;
 }

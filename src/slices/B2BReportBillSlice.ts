@@ -21,7 +21,8 @@ export const fetchBills = createAsyncThunk(
 
 export const createBill = createAsyncThunk(
     'bill/B2BReport/create',
-    (req: ReportBillRequest) => B2BReportBillService.createBill(req)
+    ({ request, orderDocument }: { request: ReportBillRequest; orderDocument?: File | null }) =>
+        B2BReportBillService.createBill(request, orderDocument)
 )
 
 export const cancelBill = createAsyncThunk(

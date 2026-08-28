@@ -12,8 +12,13 @@ export const B2BReportBillService = {
     return response.data;
   },
 
-  async createBill(request: ReportBillRequest): Promise<BillResponse> {
-    const response = await b2bReportBillApi.post<BillResponse>("", request);
+  async createBill(request: ReportBillRequest, orderDocument?: File | null): Promise<BillResponse> {
+    const formData = new FormData();
+    formData.append("request", new Blob([JSON.stringify(request)], { type: "application/json" }));
+    if (orderDocument) {
+      formData.append("orderDocument", orderDocument);
+    }
+    const response = await b2bReportBillApi.post<BillResponse>("", formData);
     return response.data;
   },
 
