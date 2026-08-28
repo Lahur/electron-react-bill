@@ -12,7 +12,7 @@ interface TableRowProps {
 }
 
 interface TableCellProps {
-  children: ReactNode;
+  children?: ReactNode;
   isHeader?: boolean;
   className?: string;
 }
