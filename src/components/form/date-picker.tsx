@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import {useEffect} from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.css";
-import type { Hook, DateOption } from "flatpickr/dist/types/options";
+import type {DateOption, Hook} from "flatpickr/dist/types/options";
 import Label from "./Label";
-import { CalenderIcon, TimeIcon } from "../../icons";
+import {CalenderIcon, TimeIcon} from "../../icons";
 
 type PropsType = {
   id: string;

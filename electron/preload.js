@@ -12,5 +12,10 @@ contextBridge.exposeInMainWorld('electron', {
     login: () => ipcRenderer.invoke('auth:login'),
     logout: () => ipcRenderer.invoke('auth:logout'),
     getToken: () => ipcRenderer.invoke('auth:get-token'),
+    onSessionExpired: (callback) => {
+      const listener = () => callback();
+      ipcRenderer.on('auth:session-expired', listener);
+      return () => ipcRenderer.removeListener('auth:session-expired', listener);
+    },
   },
 });

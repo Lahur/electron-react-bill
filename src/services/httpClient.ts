@@ -1,8 +1,8 @@
 import axios from "axios";
 import * as Sentry from "@sentry/electron/renderer";
-import { getDispatch } from "../app/storeAccessor";
-import { getAccessTokenSilently } from "../app/authAccessor";
-import { requestStarted, requestFinished } from "../features/ui/uiSlice";
+import {getDispatch} from "../app/storeAccessor";
+import {getAccessTokenSilently} from "../app/authAccessor";
+import {requestFinished, requestStarted} from "../features/ui/uiSlice";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
 

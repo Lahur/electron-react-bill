@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import type {ReactNode} from "react";
+import {Helmet, HelmetProvider} from "react-helmet-async";
 
 interface PageMetaProps {
   title: string;

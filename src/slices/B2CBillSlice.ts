@@ -1,8 +1,9 @@
-import type { BillResponse } from "../models/dto/BillResponse";
-import type { BillReviewResponse } from "../models/dto/BillReviewResponse";
-import type { F1BillRequest } from "../models/dto/F1BillRequest";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { F1BillService } from "../services/F1BillService";
+import type {BillResponse} from "../models/dto/BillResponse";
+import type {BillReviewResponse} from "../models/dto/BillReviewResponse";
+import type {F1BillRequest} from "../models/dto/F1BillRequest";
+import type {BillSearchParams} from "../models/dto/BillSearchParams";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {F1BillService} from "../services/F1BillService";
 
 interface B2CBillState {
     bills: BillResponse[];
@@ -17,6 +18,11 @@ const initialState: B2CBillState = {
 export const fetchBills = createAsyncThunk(
     'bill/B2C/fetchBills',
     () => F1BillService.getBills(),
+);
+
+export const fetchBillsFilter = createAsyncThunk(
+    'bill/B2C/fetchBillsFilter',
+    (params: BillSearchParams) => F1BillService.getBillsFilter(params),
 );
 
 export const createBill = createAsyncThunk(
@@ -41,6 +47,7 @@ const b2cSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchBills.fulfilled, (state, action) => { state.bills = action.payload; })
+            .addCase(fetchBillsFilter.fulfilled, (state, action) => { state.bills = action.payload; })
             .addCase(createBill.fulfilled, (state, action) => { state.bills = [...state.bills, action.payload]; })
             .addCase(cancelBill.fulfilled, (state, action) => { state.bills = [...state.bills, action.payload]; })
             .addCase(reviewBill.fulfilled, (state, action) => { state.billReview = action.payload; })

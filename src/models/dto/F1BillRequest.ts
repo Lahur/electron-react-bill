@@ -1,4 +1,4 @@
-import type { F1TaxRate } from "../enums/F1TaxRate";
+import type {F1TaxRate} from "../enums/F1TaxRate";
 
 export interface F1BillRequest {
   billDate: string;

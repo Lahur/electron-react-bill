@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import PageMeta from "../../../components/common/PageMeta.tsx";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb.tsx";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { resetBusinessEntityCheck } from "../../../slices/BusinessEntitySlice";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks";
+import {resetBusinessEntityCheck} from "../../../slices/BusinessEntitySlice";
 import OibForm from "./OibForm.tsx";
 import BusinessCard from "./BusinessCard.tsx";
+import type {BillType} from "./BillTypeCard.tsx";
 import BillTypeCard from "./BillTypeCard.tsx";
-import type { BillType } from "./BillTypeCard.tsx";
 import B2BBillFormCard from "./B2BBillFormCard.tsx";
 import B2CBillFormCard from "./B2CBillFormCard.tsx";
 import B2BReportFormCard from "./B2BReportFormCard.tsx";

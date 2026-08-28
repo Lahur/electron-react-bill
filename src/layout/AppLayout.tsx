@@ -1,5 +1,5 @@
-import { Outlet } from "react-router";
-import { useSidebarState } from "../hooks/useSidebarState";
+import {Outlet} from "react-router";
+import {useSidebarState} from "../hooks/useSidebarState";
 import AppHeader from "./AppHeader";
 import AppSidebar from "./AppSidebar";
 import Backdrop from "./Backdrop";

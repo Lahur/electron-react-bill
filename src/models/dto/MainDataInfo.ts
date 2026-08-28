@@ -1,6 +1,6 @@
-import type { BillDocumentKind } from "../enums/BillDocumentKind";
-import type { BillPaymentMethod } from "../enums/BillPaymentMethod";
-import type { F1FiscalStatus } from "../enums/F1FiscalStatus";
+import type {BillDocumentKind} from "../enums/BillDocumentKind";
+import type {BillPaymentMethod} from "../enums/BillPaymentMethod";
+import type {F1FiscalStatus} from "../enums/F1FiscalStatus";
 
 export interface MainDataInfo {
   billDate: string | null;

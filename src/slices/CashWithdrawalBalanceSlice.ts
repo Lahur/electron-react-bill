@@ -1,7 +1,7 @@
-import type { CashWithdrawalBalanceResponse } from "../models/dto/CashWithdrawalBalanceResponse";
-import type { CashWithdrawalAccountsStatementRequest } from "../models/dto/CashWithdrawalAccountsStatementRequest";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CashWithdrawalBalanceService } from "../services/CashWithdrawalBalanceService";
+import type {CashWithdrawalBalanceResponse} from "../models/dto/CashWithdrawalBalanceResponse";
+import type {CashWithdrawalAccountsStatementRequest} from "../models/dto/CashWithdrawalAccountsStatementRequest";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {CashWithdrawalBalanceService} from "../services/CashWithdrawalBalanceService";
 
 interface CashWithdrawalBalanceState {
     balances: CashWithdrawalBalanceResponse[];

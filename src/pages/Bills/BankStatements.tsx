@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table";
+import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
 import Button from "../../components/ui/button/Button";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchBankStatements, uploadBankStatements } from "../../slices/BankStatementSlice";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {fetchBankStatements, uploadBankStatements} from "../../slices/BankStatementSlice";
 
 const dateFormatter = new Intl.DateTimeFormat("hr-HR", {
   day: "2-digit",

@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RecipientService } from "../services/RecipientService";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {RecipientService} from "../services/RecipientService";
 
 interface RecipientState {
   emails: string[];

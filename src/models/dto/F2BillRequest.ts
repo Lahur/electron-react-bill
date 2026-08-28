@@ -1,5 +1,5 @@
-import type { BillProfile } from "../enums/BillProfile";
-import type { VatCategory } from "../enums/VatCategory";
+import type {BillProfile} from "../enums/BillProfile";
+import type {VatCategory} from "../enums/VatCategory";
 
 export interface F2BillRequest {
   billDate: string;

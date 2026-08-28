@@ -1,11 +1,11 @@
-import { useRef, useState } from "react";
-import type { SubmitEvent } from "react";
+import type {SubmitEvent} from "react";
+import {useRef, useState} from "react";
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
 import Label from "../../../components/form/Label.tsx";
 import Input from "../../../components/form/input/InputField.tsx";
 import Button from "../../../components/ui/button/Button.tsx";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { checkBusinessEntityByOib } from "../../../slices/BusinessEntitySlice";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks";
+import {checkBusinessEntityByOib} from "../../../slices/BusinessEntitySlice";
 
 function isValidOib(value: string): boolean {
     if (!/^\d{11}$/.test(value)) return false;

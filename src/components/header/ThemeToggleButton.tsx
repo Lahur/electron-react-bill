@@ -1,5 +1,5 @@
-import { useAppDispatch } from "../../app/hooks";
-import { toggleTheme } from "../../features/ui/uiSlice";
+import {useAppDispatch} from "../../app/hooks";
+import {toggleTheme} from "../../features/ui/uiSlice";
 
 export function ThemeToggleButton() {
   const dispatch = useAppDispatch();

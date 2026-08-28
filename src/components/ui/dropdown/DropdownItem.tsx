@@ -1,5 +1,5 @@
-import type { MouseEvent, ReactNode } from "react";
-import { Link } from "react-router";
+import type {MouseEvent, ReactNode} from "react";
+import {Link} from "react-router";
 
 interface DropdownItemProps {
   to?: string;

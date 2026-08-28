@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react";
-import type { SubmitEvent } from "react";
+import type {SubmitEvent} from "react";
+import {useCallback, useState} from "react";
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
 import Label from "../../../components/form/Label.tsx";
 import Input from "../../../components/form/input/InputField.tsx";
@@ -7,12 +7,12 @@ import TextArea from "../../../components/form/input/TextArea.tsx";
 import Select from "../../../components/form/Select.tsx";
 import DatePicker from "../../../components/form/date-picker.tsx";
 import Button from "../../../components/ui/button/Button.tsx";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { resetBusinessEntityCheck } from "../../../slices/BusinessEntitySlice";
-import { createBill, reviewBill } from "../../../slices/B2CBillSlice";
-import type { F1BillRequest } from "../../../models/dto/F1BillRequest";
-import type { BillReviewResponse } from "../../../models/dto/BillReviewResponse";
-import { F1TaxRate, f1TaxRateLabels } from "../../../models/enums/F1TaxRate";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks";
+import {resetBusinessEntityCheck} from "../../../slices/BusinessEntitySlice";
+import {createBill, reviewBill} from "../../../slices/B2CBillSlice";
+import type {F1BillRequest} from "../../../models/dto/F1BillRequest";
+import type {BillReviewResponse} from "../../../models/dto/BillReviewResponse";
+import {F1TaxRate, f1TaxRateLabels} from "../../../models/enums/F1TaxRate";
 import ReviewBill from "./ReviewBill.tsx";
 
 function toIsoDate(date: Date): string {

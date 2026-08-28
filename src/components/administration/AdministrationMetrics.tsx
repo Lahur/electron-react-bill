@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchDashboardSummary } from "../../features/dashboard/dashboardSlice";
-import { CheckCircleIcon, TimeIcon } from "../../icons";
+import {useEffect} from "react";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {fetchDashboardSummary} from "../../features/dashboard/dashboardSlice";
+import {CheckCircleIcon, TimeIcon} from "../../icons";
 
 const currencyFormatter = new Intl.NumberFormat("hr-HR", { style: "currency", currency: "EUR" });
 

@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useAppSelector } from "../../app/hooks";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { Dropdown } from "../ui/dropdown/Dropdown";
+import {useState} from "react";
+import {useAppSelector} from "../../app/hooks";
+import {DropdownItem} from "../ui/dropdown/DropdownItem";
+import {Dropdown} from "../ui/dropdown/Dropdown";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);

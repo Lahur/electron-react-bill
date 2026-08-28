@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useAppSelector } from "../app/hooks";
+import {useEffect} from "react";
+import {useAppSelector} from "../app/hooks";
 
 export function useThemeSync() {
   const theme = useAppSelector((state) => state.ui.theme);

@@ -1,20 +1,25 @@
-import { useCallback, useEffect, useState } from "react";
-import type { SubmitEvent } from "react";
+import type {SubmitEvent} from "react";
+import {useCallback, useEffect, useState} from "react";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table";
+import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
 import Badge from "../../components/ui/badge/Badge";
 import Button from "../../components/ui/button/Button";
 import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import DatePicker from "../../components/form/date-picker";
 import Checkbox from "../../components/form/input/Checkbox";
-import { DocsIcon } from "../../icons";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchAccountsStatements, createAccountsStatement, uploadAccountsStatementBill, syncAccountsStatements } from "../../slices/AccountsStatementSlice";
-import { toggleReportItem } from "../../slices/DocumentSlice";
-import { BillReportType } from "../../models/enums/BillReportType";
+import {DocsIcon} from "../../icons";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {
+    createAccountsStatement,
+    fetchAccountsStatements,
+    syncAccountsStatements,
+    uploadAccountsStatementBill
+} from "../../slices/AccountsStatementSlice";
+import {toggleReportItem} from "../../slices/DocumentSlice";
+import {BillReportType} from "../../models/enums/BillReportType";
 
 const dateFormatter = new Intl.DateTimeFormat("hr-HR", {
   day: "2-digit",

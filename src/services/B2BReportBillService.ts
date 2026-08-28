@@ -1,14 +1,20 @@
-import type { ReportBillRequest } from "../models/dto/ReportBillRequest";
-import type { BillResponse } from "../models/dto/BillResponse";
-import type { BillReviewResponse } from "../models/dto/BillReviewResponse";
-import type { BillInfoResponse } from "../models/dto/BillInfoResponse";
-import { createApiClient } from "./httpClient";
+import type {ReportBillRequest} from "../models/dto/ReportBillRequest";
+import type {BillResponse} from "../models/dto/BillResponse";
+import type {BillReviewResponse} from "../models/dto/BillReviewResponse";
+import type {BillInfoResponse} from "../models/dto/BillInfoResponse";
+import type {BillSearchParams} from "../models/dto/BillSearchParams";
+import {createApiClient} from "./httpClient";
 
 const b2bReportBillApi = createApiClient("/bill/f2-report");
 
 export const B2BReportBillService = {
   async getBills(): Promise<BillResponse[]> {
     const response = await b2bReportBillApi.get<BillResponse[]>("");
+    return response.data;
+  },
+
+  async getBillsFilter(params: BillSearchParams): Promise<BillResponse[]> {
+    const response = await b2bReportBillApi.post<BillResponse[]>("/filter", params);
     return response.data;
   },
 

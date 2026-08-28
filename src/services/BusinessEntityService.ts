@@ -1,5 +1,5 @@
-import type { BusinessCheckResponse } from "../models/dto/BusinessCheckResponse";
-import { createApiClient } from "./httpClient";
+import type {BusinessCheckResponse} from "../models/dto/BusinessCheckResponse";
+import {createApiClient} from "./httpClient";
 
 const businessEntityApi = createApiClient("/business-entity");
 

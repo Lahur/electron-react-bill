@@ -3,6 +3,7 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {F2BillService} from "../services/F2BillService";
 import type {F2BillRequest} from "../models/dto/F2BillRequest.ts";
 import type {BillReviewResponse} from "../models/dto/BillReviewResponse.ts";
+import type {BillSearchParams} from "../models/dto/BillSearchParams.ts";
 
 interface BillState {
     bills: BillResponse[];
@@ -17,6 +18,11 @@ const initialState: BillState = {
 export const fetchOutgoingBills = createAsyncThunk(
     'bill/B2B/fetchOutgoing',
     () => F2BillService.getBills(),
+);
+
+export const fetchBillsFilter = createAsyncThunk(
+    'bill/B2B/fetchBillsFilter',
+    (params: BillSearchParams) => F2BillService.getBillsFilter(params),
 );
 
 export const createBill = createAsyncThunk(
@@ -37,6 +43,7 @@ const b2bSlice = createSlice({
     extraReducers: (builder) => {
         builder
     .addCase(fetchOutgoingBills.fulfilled, (state, action) => { state.bills = action.payload; })
+            .addCase(fetchBillsFilter.fulfilled, (state, action) => { state.bills = action.payload; })
             .addCase(createBill.fulfilled, (state, action) => { state.bills = [...state.bills, action.payload]; })
             .addCase(reviewBill.fulfilled, (state, action) => { state.billReview = action.payload; })
     },});

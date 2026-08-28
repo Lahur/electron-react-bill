@@ -1,6 +1,6 @@
-import type { CashWithdrawalBalanceResponse } from "../models/dto/CashWithdrawalBalanceResponse";
-import type { CashWithdrawalAccountsStatementRequest } from "../models/dto/CashWithdrawalAccountsStatementRequest";
-import { createApiClient } from "./httpClient";
+import type {CashWithdrawalBalanceResponse} from "../models/dto/CashWithdrawalBalanceResponse";
+import type {CashWithdrawalAccountsStatementRequest} from "../models/dto/CashWithdrawalAccountsStatementRequest";
+import {createApiClient} from "./httpClient";
 
 const cashWithdrawalBalanceApi = createApiClient("/cash-withdrawal-balance");
 

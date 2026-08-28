@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import {configureStore} from "@reduxjs/toolkit";
 import authReducer from "../features/auth/authSlice";
 import uiReducer from "../features/ui/uiSlice";
 import dashboardReducer from "../features/dashboard/dashboardSlice";
@@ -14,8 +14,8 @@ import PosTransactionSlice from "../slices/PosTransactionSlice.ts";
 import AccountsStatementSlice from "../slices/AccountsStatementSlice.ts";
 import CashWithdrawalBalanceSlice from "../slices/CashWithdrawalBalanceSlice.ts";
 import RecipientSlice from "../slices/RecipientSlice.ts";
-import { setDispatch } from "./storeAccessor";
-import { sentryMiddleware } from "./sentryMiddleware";
+import {setDispatch} from "./storeAccessor";
+import {sentryMiddleware} from "./sentryMiddleware";
 
 export const store = configureStore({
   reducer: {

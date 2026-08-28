@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import {useEffect} from "react";
 import Chart from "react-apexcharts";
-import type { ApexOptions } from "apexcharts";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchStatistics } from "../../features/dashboard/dashboardSlice";
+import type {ApexOptions} from "apexcharts";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {fetchStatistics} from "../../features/dashboard/dashboardSlice";
 
 export default function StatisticsChart() {
   const dispatch = useAppDispatch();

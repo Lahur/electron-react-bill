@@ -1,6 +1,6 @@
-import type { BankStatementResponse } from "../models/dto/BankStatementResponse";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { BankStatementService } from "../services/BankStatementService";
+import type {BankStatementResponse} from "../models/dto/BankStatementResponse";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {BankStatementService} from "../services/BankStatementService";
 
 interface BankStatementState {
     statements: BankStatementResponse[];

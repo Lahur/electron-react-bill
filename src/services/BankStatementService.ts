@@ -1,5 +1,5 @@
-import type { BankStatementResponse } from "../models/dto/BankStatementResponse";
-import { createApiClient } from "./httpClient";
+import type {BankStatementResponse} from "../models/dto/BankStatementResponse";
+import {createApiClient} from "./httpClient";
 
 const bankStatementApi = createApiClient("/bank-statement");
 

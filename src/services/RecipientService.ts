@@ -1,4 +1,4 @@
-import { createApiClient } from "./httpClient";
+import {createApiClient} from "./httpClient";
 
 const recipientApi = createApiClient("/recipient");
 

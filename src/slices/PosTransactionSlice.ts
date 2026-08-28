@@ -1,6 +1,6 @@
-import type { PosTransactionResponse } from "../models/dto/PosTransactionResponse";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { PosTransactionService } from "../services/PosTransactionService";
+import type {PosTransactionResponse} from "../models/dto/PosTransactionResponse";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {PosTransactionService} from "../services/PosTransactionService";
 
 interface PosTransactionState {
     transactions: PosTransactionResponse[];

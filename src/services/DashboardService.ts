@@ -1,7 +1,7 @@
-import type { DashboardSummaryResponse } from "../models/dto/DashboardSummaryResponse";
-import type { DailyTotalResponse } from "../models/dto/DailyTotalResponse";
-import type { MonthlySummaryResponse } from "../models/dto/MonthlySummaryResponse";
-import { createApiClient } from "./httpClient";
+import type {DashboardSummaryResponse} from "../models/dto/DashboardSummaryResponse";
+import type {DailyTotalResponse} from "../models/dto/DailyTotalResponse";
+import type {MonthlySummaryResponse} from "../models/dto/MonthlySummaryResponse";
+import {createApiClient} from "./httpClient";
 
 const dashboardApi = createApiClient("/dashboard");
 

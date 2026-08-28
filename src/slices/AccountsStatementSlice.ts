@@ -1,7 +1,7 @@
-import type { AccountsStatementResponse } from "../models/dto/AccountsStatementResponse";
-import type { CreateAccountsStatementRequest } from "../models/dto/CreateAccountsStatementRequest";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { AccountsStatementService } from "../services/AccountsStatementService";
+import type {AccountsStatementResponse} from "../models/dto/AccountsStatementResponse";
+import type {CreateAccountsStatementRequest} from "../models/dto/CreateAccountsStatementRequest";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {AccountsStatementService} from "../services/AccountsStatementService";
 
 interface AccountsStatementState {
     statements: AccountsStatementResponse[];

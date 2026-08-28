@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { Modal } from "../ui/modal";
+import {useEffect, useState} from "react";
+import {Modal} from "../ui/modal";
 import Label from "../form/Label";
 import EmailAutocompleteInput from "../form/input/EmailAutocompleteInput";
 import Button from "../ui/button/Button";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { generateAndSendDocuments } from "../../slices/DocumentSlice";
-import { fetchRecipients } from "../../slices/RecipientSlice";
-import { billReportTypeLabels } from "../../models/enums/BillReportType";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {generateAndSendDocuments} from "../../slices/DocumentSlice";
+import {fetchRecipients} from "../../slices/RecipientSlice";
+import {billReportTypeLabels} from "../../models/enums/BillReportType";
 
 interface SendReportsModalProps {
   isOpen: boolean;

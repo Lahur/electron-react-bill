@@ -1,4 +1,4 @@
-import type { AppDispatch } from "./store";
+import type {AppDispatch} from "./store";
 
 let dispatchRef: AppDispatch | null = null;
 

@@ -1,16 +1,17 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import {useEffect} from "react";
+import {useNavigate} from "react-router";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table";
+import BillsFilterToolbar from "../../components/bills/BillsFilterToolbar";
+import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
 import Badge from "../../components/ui/badge/Badge";
-import { DocsIcon } from "../../icons";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchBills } from "../../slices/B2BReportBillSlice";
-import { toggleReportItem } from "../../slices/DocumentSlice";
-import type { DocumentStatus } from "../../models/enums/DocumentStatus";
-import { documentStatusLabels } from "../../models/enums/DocumentStatus";
-import { BillReportType } from "../../models/enums/BillReportType";
+import {DocsIcon} from "../../icons";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {fetchBills, fetchBillsFilter} from "../../slices/B2BReportBillSlice";
+import {toggleReportItem} from "../../slices/DocumentSlice";
+import type {DocumentStatus} from "../../models/enums/DocumentStatus";
+import {documentStatusLabels} from "../../models/enums/DocumentStatus";
+import {BillReportType} from "../../models/enums/BillReportType";
 
 const statusColor: Record<DocumentStatus, "success" | "warning" | "error" | "info"> = {
   NaCekanju: "warning",
@@ -55,8 +56,14 @@ export default function B2BReportBills() {
         description="Popis prijavljenih B2B računa."
       />
       <PageBreadcrumb pageTitle="B2B prijave računa" />
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
-        <div className="max-w-full overflow-x-auto">
+      <div className="flex flex-col gap-5">
+        <BillsFilterToolbar
+          onApply={(params) => dispatch(fetchBillsFilter(params))}
+          onReset={() => dispatch(fetchBills())}
+        />
+
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+          <div className="max-w-full overflow-x-auto">
           <Table>
             <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
               <TableRow>
@@ -145,6 +152,7 @@ export default function B2BReportBills() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </div>
       </div>
     </>

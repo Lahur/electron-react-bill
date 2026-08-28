@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Link, useLocation } from "react-router";
-import { BoxIconLine, ChevronDownIcon, DocsIcon, GridIcon, HorizontaLDots } from "../icons";
-import { useSidebarState } from "../hooks/useSidebarState";
+import {type ReactNode, useEffect, useRef, useState} from "react";
+import {Link, useLocation} from "react-router";
+import {BoxIconLine, ChevronDownIcon, DocsIcon, GridIcon, HorizontaLDots} from "../icons";
+import {useSidebarState} from "../hooks/useSidebarState";
 
 type NavItem = {
   name: string;

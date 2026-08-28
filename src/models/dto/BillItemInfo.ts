@@ -1,5 +1,5 @@
-import type { UnitOfMeasure } from "../enums/UnitOfMeasure";
-import type { BillVatRate } from "../enums/BillVatRate";
+import type {UnitOfMeasure} from "../enums/UnitOfMeasure";
+import type {BillVatRate} from "../enums/BillVatRate";
 
 export interface BillItemInfo {
   name: string;

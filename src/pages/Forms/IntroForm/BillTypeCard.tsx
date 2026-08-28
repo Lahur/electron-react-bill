@@ -1,8 +1,8 @@
-import { useState } from "react";
+import {useState} from "react";
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
 import Checkbox from "../../../components/form/input/Checkbox.tsx";
 import Button from "../../../components/ui/button/Button.tsx";
-import { useAppSelector } from "../../../app/hooks";
+import {useAppSelector} from "../../../app/hooks";
 
 export type BillType = "B2B_BILL" | "B2C_BILL" | "B2B_REPORT";
 

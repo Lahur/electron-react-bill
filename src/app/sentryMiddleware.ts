@@ -1,4 +1,4 @@
-import { isRejected, type Middleware } from "@reduxjs/toolkit";
+import {isRejected, type Middleware} from "@reduxjs/toolkit";
 import * as Sentry from "@sentry/electron/renderer";
 
 /**

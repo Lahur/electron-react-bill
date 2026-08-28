@@ -1,17 +1,17 @@
-import { useEffect } from "react";
-import { useParams } from "react-router";
+import {useEffect} from "react";
+import {useParams} from "react-router";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { getBillInfo } from "../../slices/BillInfoSlice";
-import type { BillInfoType } from "../../slices/BillInfoSlice";
-import { billDocumentKindLabels } from "../../models/enums/BillDocumentKind";
-import { unitOfMeasureLabels } from "../../models/enums/UnitOfMeasure";
-import { billVatRateLabels } from "../../models/enums/BillVatRate";
-import { billPaymentMethodLabels } from "../../models/enums/BillPaymentMethod";
-import { f1FiscalStatusLabels } from "../../models/enums/F1FiscalStatus";
+import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import type {BillInfoType} from "../../slices/BillInfoSlice";
+import {getBillInfo} from "../../slices/BillInfoSlice";
+import {billDocumentKindLabels} from "../../models/enums/BillDocumentKind";
+import {unitOfMeasureLabels} from "../../models/enums/UnitOfMeasure";
+import {billVatRateLabels} from "../../models/enums/BillVatRate";
+import {billPaymentMethodLabels} from "../../models/enums/BillPaymentMethod";
+import {f1FiscalStatusLabels} from "../../models/enums/F1FiscalStatus";
 
 const dateFormatter = new Intl.DateTimeFormat("hr-HR", {
   day: "2-digit",

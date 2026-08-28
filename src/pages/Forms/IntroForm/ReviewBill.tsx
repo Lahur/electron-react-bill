@@ -1,8 +1,8 @@
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
 import Button from "../../../components/ui/button/Button.tsx";
-import type { BillReviewResponse } from "../../../models/dto/BillReviewResponse.ts";
-import { billProfileLabels } from "../../../models/enums/BillProfile";
-import { vatCategoryLabels } from "../../../models/enums/VatCategory";
+import type {BillReviewResponse} from "../../../models/dto/BillReviewResponse.ts";
+import {billProfileLabels} from "../../../models/enums/BillProfile";
+import {vatCategoryLabels} from "../../../models/enums/VatCategory";
 
 function Field({ label, value }: { label: string; value?: string | number | null }) {
     return (

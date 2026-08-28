@@ -42,7 +42,16 @@ let mainWindow;
 // Login opens in an in-app BrowserWindow rather than the system browser; the
 // redirect to electron-react-bill://callback is intercepted before it ever
 // navigates anywhere, so no OS-level protocol registration is needed.
-const authManager = createAuthManager({ getParentWindow: () => mainWindow });
+const authManager = createAuthManager({
+  getParentWindow: () => mainWindow,
+  // A refresh attempt failed and the session is gone — tell the renderer so it
+  // can drop back to the login screen instead of firing doomed API requests.
+  onSessionExpired: () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('auth:session-expired');
+    }
+  },
+});
 
 function createWindow() {
   mainWindow = new BrowserWindow({

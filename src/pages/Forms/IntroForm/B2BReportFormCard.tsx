@@ -1,6 +1,6 @@
-import { useCallback, useState } from "react";
-import type { SubmitEvent } from "react";
-import { useNavigate } from "react-router";
+import type {SubmitEvent} from "react";
+import {useCallback, useState} from "react";
+import {useNavigate} from "react-router";
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
 import Label from "../../../components/form/Label.tsx";
 import Input from "../../../components/form/input/InputField.tsx";
@@ -8,14 +8,14 @@ import TextArea from "../../../components/form/input/TextArea.tsx";
 import Select from "../../../components/form/Select.tsx";
 import DatePicker from "../../../components/form/date-picker.tsx";
 import Button from "../../../components/ui/button/Button.tsx";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { resetBusinessEntityCheck } from "../../../slices/BusinessEntitySlice";
-import { createBill, reviewBill } from "../../../slices/B2BReportBillSlice";
-import type { ReportBillRequest } from "../../../models/dto/ReportBillRequest";
-import type { BillReviewResponse } from "../../../models/dto/BillReviewResponse";
-import { BillProfile, billProfileLabels } from "../../../models/enums/BillProfile";
-import { VatCategory, vatCategoryLabels } from "../../../models/enums/VatCategory";
-import { DocsIcon } from "../../../icons";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks";
+import {resetBusinessEntityCheck} from "../../../slices/BusinessEntitySlice";
+import {createBill, reviewBill} from "../../../slices/B2BReportBillSlice";
+import type {ReportBillRequest} from "../../../models/dto/ReportBillRequest";
+import type {BillReviewResponse} from "../../../models/dto/BillReviewResponse";
+import {BillProfile, billProfileLabels} from "../../../models/enums/BillProfile";
+import {VatCategory, vatCategoryLabels} from "../../../models/enums/VatCategory";
+import {DocsIcon} from "../../../icons";
 import ReviewBill from "./ReviewBill.tsx";
 
 function toIsoDate(date: Date): string {

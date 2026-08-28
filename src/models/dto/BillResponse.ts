@@ -1,5 +1,5 @@
-import type { DocumentStatus } from "../enums/DocumentStatus";
-import type { BillType } from "../enums/BillType";
+import type {DocumentStatus} from "../enums/DocumentStatus";
+import type {BillType} from "../enums/BillType";
 
 export interface BillResponse {
   id: string;

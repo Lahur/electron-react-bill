@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import {useMemo, useState} from "react";
 import Input from "./InputField";
-import { Dropdown } from "../../ui/dropdown/Dropdown";
-import { DropdownItem } from "../../ui/dropdown/DropdownItem";
+import {Dropdown} from "../../ui/dropdown/Dropdown";
+import {DropdownItem} from "../../ui/dropdown/DropdownItem";
 
 interface EmailAutocompleteInputProps {
   id?: string;

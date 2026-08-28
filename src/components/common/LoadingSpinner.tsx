@@ -1,4 +1,4 @@
-import { useAppSelector } from "../../app/hooks";
+import {useAppSelector} from "../../app/hooks";
 
 export default function LoadingSpinner() {
   const isLoading = useAppSelector((state) => state.ui.pendingRequests > 0);

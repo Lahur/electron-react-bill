@@ -1,4 +1,4 @@
-import { useSidebarState } from "../hooks/useSidebarState";
+import {useSidebarState} from "../hooks/useSidebarState";
 
 export default function Backdrop() {
   const { isMobileOpen, toggleMobileSidebar } = useSidebarState();

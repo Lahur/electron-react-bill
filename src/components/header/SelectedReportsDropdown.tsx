@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { Dropdown } from "../ui/dropdown/Dropdown";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import {useState} from "react";
+import {Dropdown} from "../ui/dropdown/Dropdown";
+import {DropdownItem} from "../ui/dropdown/DropdownItem";
 import Button from "../ui/button/Button";
 import SendReportsModal from "./SendReportsModal";
-import { DocsIcon } from "../../icons";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { toggleReportItem } from "../../slices/DocumentSlice";
-import { billReportTypeLabels } from "../../models/enums/BillReportType";
-import { useModal } from "../../hooks/useModal";
+import {DocsIcon} from "../../icons";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {toggleReportItem} from "../../slices/DocumentSlice";
+import {billReportTypeLabels} from "../../models/enums/BillReportType";
+import {useModal} from "../../hooks/useModal";
 
 export default function SelectedReportsDropdown() {
   const [isOpen, setIsOpen] = useState(false);

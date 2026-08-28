@@ -1,11 +1,11 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { Provider } from 'react-redux'
+import {StrictMode} from 'react'
+import {createRoot} from 'react-dom/client'
+import {Provider} from 'react-redux'
 import * as Sentry from '@sentry/electron/renderer'
 import './index.css'
 import App from './App.tsx'
-import { AppWrapper } from './components/common/PageMeta.tsx'
-import { store } from './app/store.ts'
+import {AppWrapper} from './components/common/PageMeta.tsx'
+import {store} from './app/store.ts'
 
 Sentry.init({
   dsn: 'https://3ba4c0f6c910f9af7cb63951262803b0@o4511728439197696.ingest.de.sentry.io/4511987834028112',

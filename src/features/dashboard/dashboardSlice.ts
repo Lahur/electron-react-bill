@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import DashboardService from "../../services/DashboardService";
-import type { DailyTotalResponse } from "../../models/dto/DailyTotalResponse";
+import type {DailyTotalResponse} from "../../models/dto/DailyTotalResponse";
 
 interface DashboardState {
   summary: {

@@ -1,6 +1,6 @@
-import type { BusinessCheckResponse } from "../models/dto/BusinessCheckResponse";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { BusinessEntityService } from "../services/BusinessEntityService";
+import type {BusinessCheckResponse} from "../models/dto/BusinessCheckResponse";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {BusinessEntityService} from "../services/BusinessEntityService";
 
 interface BusinessEntityState {
     checkResult: BusinessCheckResponse | null;

@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import {useEffect, useState} from "react";
+import {useAppDispatch, useAppSelector} from "../app/hooks";
 import {
-  setMobileSidebarOpen,
-  setSidebarHovered,
-  toggleMobileSidebar,
-  toggleSidebar,
-  toggleSubmenu,
+    setMobileSidebarOpen,
+    setSidebarHovered,
+    toggleMobileSidebar,
+    toggleSidebar,
+    toggleSubmenu,
 } from "../features/ui/uiSlice";
 
 export function useSidebarState() {

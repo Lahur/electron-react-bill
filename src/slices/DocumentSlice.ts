@@ -1,8 +1,8 @@
-import type { SendBillReportsRequest } from "../models/dto/SendBillReportsRequest";
-import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { DocumentService } from "../services/DocumentService";
+import type {SendBillReportsRequest} from "../models/dto/SendBillReportsRequest";
+import {createAsyncThunk, createSlice, type PayloadAction} from "@reduxjs/toolkit";
+import {DocumentService} from "../services/DocumentService";
 import type {SendBillReportItem} from "../models/dto/SendBillReportItem.ts";
-import type { RootState } from "../app/store";
+import type {RootState} from "../app/store";
 
 interface DocumentState {
     reportItems: SendBillReportItem[];

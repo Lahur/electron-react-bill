@@ -1,6 +1,6 @@
-import type { AccountsStatementResponse } from "../models/dto/AccountsStatementResponse";
-import type { CreateAccountsStatementRequest } from "../models/dto/CreateAccountsStatementRequest";
-import { createApiClient } from "./httpClient";
+import type {AccountsStatementResponse} from "../models/dto/AccountsStatementResponse";
+import type {CreateAccountsStatementRequest} from "../models/dto/CreateAccountsStatementRequest";
+import {createApiClient} from "./httpClient";
 
 const accountsStatementApi = createApiClient("/accounts-statement");
 

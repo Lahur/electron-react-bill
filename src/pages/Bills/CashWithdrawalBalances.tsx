@@ -1,12 +1,12 @@
-import { useEffect } from "react";
+import {useEffect} from "react";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table";
-import { DocsIcon } from "../../icons";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchCashWithdrawalBalances } from "../../slices/CashWithdrawalBalanceSlice";
-import { toggleReportItem } from "../../slices/DocumentSlice";
-import { BillReportType } from "../../models/enums/BillReportType";
+import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
+import {DocsIcon} from "../../icons";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {fetchCashWithdrawalBalances} from "../../slices/CashWithdrawalBalanceSlice";
+import {toggleReportItem} from "../../slices/DocumentSlice";
+import {BillReportType} from "../../models/enums/BillReportType";
 
 const dateTimeFormatter = new Intl.DateTimeFormat("hr-HR", {
   day: "2-digit",

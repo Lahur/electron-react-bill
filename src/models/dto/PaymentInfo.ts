@@ -1,4 +1,4 @@
-import type { BillPaymentMethod } from "../enums/BillPaymentMethod";
+import type {BillPaymentMethod} from "../enums/BillPaymentMethod";
 
 export interface PaymentInfo {
   paymentMethod: BillPaymentMethod;

@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react";
-import { HashRouter, Route, Routes } from "react-router";
-import { useAppDispatch, useAppSelector } from "./app/hooks";
-import { loginStarted, loginSucceeded, loginFailed } from "./features/auth/authSlice";
-import { ScrollToTop } from "./components/common/ScrollToTop";
+import {useEffect, useRef} from "react";
+import {HashRouter, Route, Routes} from "react-router";
+import {useAppDispatch, useAppSelector} from "./app/hooks";
+import {loginFailed, loginStarted, loginSucceeded} from "./features/auth/authSlice";
+import {ScrollToTop} from "./components/common/ScrollToTop";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import AppLayout from "./layout/AppLayout";
 import Home from "./pages/Dashboard/Home";
@@ -16,24 +16,36 @@ import AccountsStatements from "./pages/Bills/AccountsStatements";
 import CashWithdrawalBalances from "./pages/Bills/CashWithdrawalBalances";
 import BillInfo from "./pages/Bills/BillInfo";
 import IntroForm from "./pages/Forms/IntroForm";
-import { useThemeSync } from "./hooks/useThemeSync";
+import {useThemeSync} from "./hooks/useThemeSync";
 
 export default function App() {
   useThemeSync();
 
   const dispatch = useAppDispatch();
   const { isLoading, isAuthenticated, error } = useAppSelector((state) => state.auth);
-  const loginAttempted = useRef(false);
+  const loginInFlight = useRef(false);
 
   useEffect(() => {
-    if (loginAttempted.current) return;
-    loginAttempted.current = true;
+    const runLogin = () => {
+      if (loginInFlight.current) return;
+      loginInFlight.current = true;
 
-    dispatch(loginStarted());
-    window.electron.auth
-      .login()
-      .then((user) => dispatch(loginSucceeded(user)))
-      .catch((err) => dispatch(loginFailed(err instanceof Error ? err.message : "Login failed")));
+      dispatch(loginStarted());
+      window.electron.auth
+        .login()
+        .then((user) => dispatch(loginSucceeded(user)))
+        .catch((err) => dispatch(loginFailed(err instanceof Error ? err.message : "Login failed")))
+        .finally(() => {
+          loginInFlight.current = false;
+        });
+    };
+
+    runLogin();
+
+    // The main process fires this when a token refresh fails and the session is
+    // gone; re-run the login flow (seamless if the Keycloak SSO cookie is still
+    // alive, otherwise the sign-in form reappears).
+    return window.electron.auth.onSessionExpired(runLogin);
   }, [dispatch]);
 
   if (isLoading) {

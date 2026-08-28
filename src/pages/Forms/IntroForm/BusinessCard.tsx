@@ -1,5 +1,5 @@
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
-import { useAppSelector } from "../../../app/hooks";
+import {useAppSelector} from "../../../app/hooks";
 
 export default function BusinessCard() {
     const business = useAppSelector((state) => state.businessEntity.checkResult);

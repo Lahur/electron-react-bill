@@ -1,5 +1,5 @@
-import type { SendBillReportsRequest } from "../models/dto/SendBillReportsRequest";
-import { createApiClient } from "./httpClient";
+import type {SendBillReportsRequest} from "../models/dto/SendBillReportsRequest";
+import {createApiClient} from "./httpClient";
 
 const documentApi = createApiClient("/document");
 
