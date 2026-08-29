@@ -1,5 +1,6 @@
 import type {SubmitEvent} from "react";
 import {useCallback, useState} from "react";
+import {useNavigate} from "react-router";
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
 import Label from "../../../components/form/Label.tsx";
 import Input from "../../../components/form/input/InputField.tsx";
@@ -60,6 +61,7 @@ const initialFormState: B2CBillFormState = {
 
 export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const business = useAppSelector((state) => state.businessEntity.checkResult);
     const entity = business?.businessEntity;
 
@@ -156,8 +158,7 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
         try {
             await dispatch(createBill(pendingRequest)).unwrap();
             dispatch(resetBusinessEntityCheck());
-            setForm(initialFormState);
-            onCancel();
+            navigate("/bills/outgoing/b2c");
         } catch {
             setSubmitError("Izrada računa nije uspjela. Pokušajte ponovno.");
         } finally {
