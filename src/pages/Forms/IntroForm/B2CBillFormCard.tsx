@@ -32,7 +32,6 @@ interface B2CBillFormState {
     billTime: string;
     dueDate: string;
     note: string;
-    buyerOib: string;
     buyerName: string;
     buyerAddress: string;
     buyerCity: string;
@@ -48,7 +47,6 @@ const initialFormState: B2CBillFormState = {
     billTime: "",
     dueDate: "",
     note: "",
-    buyerOib: "",
     buyerName: "",
     buyerAddress: "",
     buyerCity: "",
@@ -63,6 +61,7 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const business = useAppSelector((state) => state.businessEntity.checkResult);
+    const checkedOib = useAppSelector((state) => state.businessEntity.checkedOib);
     const entity = business?.businessEntity;
 
     const [form, setForm] = useState<B2CBillFormState>(initialFormState);
@@ -100,7 +99,6 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
         if (!form.billItemName) newErrors.billItemName = true;
         if (!form.billItemDescription) newErrors.billItemDescription = true;
         if (!entity) {
-            if (!form.buyerOib) newErrors.buyerOib = true;
             if (!form.buyerName) newErrors.buyerName = true;
             if (!form.buyerAddress) newErrors.buyerAddress = true;
             if (!form.buyerCity) newErrors.buyerCity = true;
@@ -121,7 +119,7 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
             billTime: form.billTime,
             dueDate: form.dueDate,
             note: form.note || undefined,
-            buyerOib: entity ? entity.oib : form.buyerOib,
+            buyerOib: entity ? entity.oib : (checkedOib ?? ""),
             buyerName: entity ? entity.name : form.buyerName,
             buyerAddress: entity ? entity.headquatersAddress : form.buyerAddress,
             buyerCity: entity ? entity.headquatersCity : form.buyerCity,
@@ -231,29 +229,16 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
 
                     {!entity && (
                         <>
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div>
-                                    <Label htmlFor="buyerOib">OIB kupca</Label>
-                                    <Input
-                                        type="text"
-                                        id="buyerOib"
-                                        value={form.buyerOib}
-                                        onChange={(e) => setField("buyerOib", e.target.value)}
-                                        error={errors.buyerOib}
-                                        hint={errors.buyerOib ? "OIB kupca je obavezan." : ""}
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor="buyerName">Naziv kupca</Label>
-                                    <Input
-                                        type="text"
-                                        id="buyerName"
-                                        value={form.buyerName}
-                                        onChange={(e) => setField("buyerName", e.target.value)}
-                                        error={errors.buyerName}
-                                        hint={errors.buyerName ? "Naziv kupca je obavezan." : ""}
-                                    />
-                                </div>
+                            <div>
+                                <Label htmlFor="buyerName">Naziv kupca</Label>
+                                <Input
+                                    type="text"
+                                    id="buyerName"
+                                    value={form.buyerName}
+                                    onChange={(e) => setField("buyerName", e.target.value)}
+                                    error={errors.buyerName}
+                                    hint={errors.buyerName ? "Naziv kupca je obavezan." : ""}
+                                />
                             </div>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>

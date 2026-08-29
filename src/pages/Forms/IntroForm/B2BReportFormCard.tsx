@@ -41,7 +41,6 @@ interface BillFormState {
     dueDate: string;
     note: string;
     orderNumber: string;
-    buyerOib: string;
     buyerName: string;
     buyerStreet: string;
     buyerCity: string;
@@ -60,7 +59,6 @@ const initialBillFormState: BillFormState = {
     dueDate: "",
     note: "",
     orderNumber: "",
-    buyerOib: "",
     buyerName: "",
     buyerStreet: "",
     buyerCity: "",
@@ -75,6 +73,7 @@ export default function B2BReportFormCard({ onCancel }: { onCancel: () => void }
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const business = useAppSelector((state) => state.businessEntity.checkResult);
+    const checkedOib = useAppSelector((state) => state.businessEntity.checkedOib);
     const entity = business?.businessEntity;
 
     const [form, setForm] = useState<BillFormState>(initialBillFormState);
@@ -122,7 +121,6 @@ export default function B2BReportFormCard({ onCancel }: { onCancel: () => void }
         if (!form.billItemDescription) newErrors.billItemDescription = true;
         if (orderDocument && !form.orderNumber) newErrors.orderNumber = true;
         if (!entity) {
-            if (!form.buyerOib) newErrors.buyerOib = true;
             if (!form.buyerName) newErrors.buyerName = true;
             if (!form.buyerStreet) newErrors.buyerStreet = true;
             if (!form.buyerCity) newErrors.buyerCity = true;
@@ -146,7 +144,7 @@ export default function B2BReportFormCard({ onCancel }: { onCancel: () => void }
             dueDate: form.dueDate,
             note: form.note || undefined,
             orderNumber: form.orderNumber || undefined,
-            buyerOib: entity ? entity.oib : form.buyerOib,
+            buyerOib: entity ? entity.oib : (checkedOib ?? ""),
             buyerName: entity ? entity.name : form.buyerName,
             buyerStreet: entity ? entity.headquatersAddress : form.buyerStreet,
             buyerCity: entity ? entity.headquatersCity : form.buyerCity,
@@ -284,29 +282,16 @@ export default function B2BReportFormCard({ onCancel }: { onCancel: () => void }
 
                     {!entity && (
                         <>
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div>
-                                    <Label htmlFor="buyerOib">OIB kupca</Label>
-                                    <Input
-                                        type="text"
-                                        id="buyerOib"
-                                        value={form.buyerOib}
-                                        onChange={(e) => setField("buyerOib", e.target.value)}
-                                        error={errors.buyerOib}
-                                        hint={errors.buyerOib ? "OIB kupca je obavezan." : ""}
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor="buyerName">Naziv kupca</Label>
-                                    <Input
-                                        type="text"
-                                        id="buyerName"
-                                        value={form.buyerName}
-                                        onChange={(e) => setField("buyerName", e.target.value)}
-                                        error={errors.buyerName}
-                                        hint={errors.buyerName ? "Naziv kupca je obavezan." : ""}
-                                    />
-                                </div>
+                            <div>
+                                <Label htmlFor="buyerName">Naziv kupca</Label>
+                                <Input
+                                    type="text"
+                                    id="buyerName"
+                                    value={form.buyerName}
+                                    onChange={(e) => setField("buyerName", e.target.value)}
+                                    error={errors.buyerName}
+                                    hint={errors.buyerName ? "Naziv kupca je obavezan." : ""}
+                                />
                             </div>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
