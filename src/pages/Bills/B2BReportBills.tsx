@@ -140,7 +140,7 @@ export default function B2BReportBills() {
                         );
                       }}
                       className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${
-                        reportItems.some((item) => item.id === bill.systemId)
+                        reportItems.some((item) => item.id === bill.id)
                           ? "border-brand-500 bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400"
                           : "border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
                       }`}
