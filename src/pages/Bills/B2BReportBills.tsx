@@ -133,7 +133,7 @@ export default function B2BReportBills() {
                         event.stopPropagation();
                         dispatch(
                           toggleReportItem({
-                            id: bill.systemId,
+                            id: bill.id,
                             billId: bill.fullBillId,
                             type: BillReportType.F2_REPORT,
                           }),
