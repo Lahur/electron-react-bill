@@ -6,6 +6,7 @@ export const BillReportType = {
   CASH_WITHDRAWAL: "CASH_WITHDRAWAL",
   ACCOUNTS_STATEMENT: "ACCOUNTS_STATEMENT",
   POS: "POS",
+  BANK_STATEMENT: "BANK_STATEMENT",
 } as const;
 
 export type BillReportType = (typeof BillReportType)[keyof typeof BillReportType];
@@ -18,4 +19,5 @@ export const billReportTypeLabels: Record<BillReportType, string> = {
   [BillReportType.CASH_WITHDRAWAL]: "Stanje blagajne",
   [BillReportType.ACCOUNTS_STATEMENT]: "Blagajnički izvještaj",
   [BillReportType.POS]: "POS transakcija",
+  [BillReportType.BANK_STATEMENT]: "Bankovni izvod",
 };

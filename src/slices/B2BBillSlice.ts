@@ -31,6 +31,11 @@ export const createBill = createAsyncThunk(
         F2BillService.createBill(request, orderDocument)
 )
 
+export const cancelBill = createAsyncThunk(
+    'bill/B2B/cancel',
+    ({ originalId, newId }: { originalId: number; newId: number }) => F2BillService.cancelBill(originalId, newId)
+)
+
 export const reviewBill = createAsyncThunk(
     'bill/B2B/review',
     (req: F2BillRequest) => F2BillService.reviewBill(req)
@@ -45,6 +50,7 @@ const b2bSlice = createSlice({
     .addCase(fetchOutgoingBills.fulfilled, (state, action) => { state.bills = action.payload; })
             .addCase(fetchBillsFilter.fulfilled, (state, action) => { state.bills = action.payload; })
             .addCase(createBill.fulfilled, (state, action) => { state.bills = [...state.bills, action.payload]; })
+            .addCase(cancelBill.fulfilled, (state, action) => { state.bills = [...state.bills, action.payload]; })
             .addCase(reviewBill.fulfilled, (state, action) => { state.billReview = action.payload; })
     },});
 

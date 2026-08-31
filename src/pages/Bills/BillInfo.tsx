@@ -1,12 +1,17 @@
-import {useEffect} from "react";
-import {useParams} from "react-router";
+import {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
+import Button from "../../components/ui/button/Button";
+import CancelBillModal from "../../components/bills/CancelBillModal";
 import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import type {BillInfoType} from "../../slices/BillInfoSlice";
 import {getBillInfo} from "../../slices/BillInfoSlice";
+import {cancelBill as cancelF2Bill} from "../../slices/B2BBillSlice";
+import {cancelBill as cancelF1Bill} from "../../slices/B2CBillSlice";
+import {cancelBill as cancelReportBill} from "../../slices/B2BReportBillSlice";
 import {billDocumentKindLabels} from "../../models/enums/BillDocumentKind";
 import {unitOfMeasureLabels} from "../../models/enums/UnitOfMeasure";
 import {billVatRateLabels} from "../../models/enums/BillVatRate";
@@ -33,6 +38,12 @@ function formatAmount(amount?: number | null): string | null {
   return amount.toFixed(2);
 }
 
+const cancelConfig: Partial<Record<BillInfoType, { listRoute: string; needsNewId: boolean }>> = {
+  f1: { listRoute: "/bills/outgoing/b2c", needsNewId: false },
+  f2: { listRoute: "/bills/outgoing/b2b", needsNewId: true },
+  "b2b-report": { listRoute: "/bills/outgoing/b2b-report", needsNewId: true },
+};
+
 function Field({ label, value }: { label: string; value?: string | number | null }) {
   return (
     <div>
@@ -47,13 +58,42 @@ function Field({ label, value }: { label: string; value?: string | number | null
 export default function BillInfo() {
   const { billType, id } = useParams<{ billType: BillInfoType; id: string }>();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const billInfo = useAppSelector((state) => state.billInfo.billInfo);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   useEffect(() => {
     if (billType && id) {
       dispatch(getBillInfo({ billType, id }));
     }
   }, [dispatch, billType, id]);
+
+  const cancellable = billType ? cancelConfig[billType] : undefined;
+
+  const handleCancelBill = async (newId?: number) => {
+    if (!billType || !id || !cancellable) return;
+    const originalId = Number(id);
+
+    setIsCancelling(true);
+    setCancelError(null);
+    try {
+      if (billType === "f1") {
+        await dispatch(cancelF1Bill(originalId)).unwrap();
+      } else if (billType === "f2") {
+        await dispatch(cancelF2Bill({ originalId, newId: newId! })).unwrap();
+      } else if (billType === "b2b-report") {
+        await dispatch(cancelReportBill({ originalId, newId: newId! })).unwrap();
+      }
+      setIsCancelModalOpen(false);
+      navigate(cancellable.listRoute);
+    } catch {
+      setCancelError("Storniranje računa nije uspjelo. Pokušajte ponovno.");
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   if (!billInfo) {
     return null;
@@ -68,6 +108,32 @@ export default function BillInfo() {
         description="Detalji računa."
       />
       <PageBreadcrumb pageTitle="Podaci o računu" />
+      {cancellable && (
+        <div className="mb-4 flex justify-end">
+          <Button
+            size="sm"
+            onClick={() => setIsCancelModalOpen(true)}
+            className="!bg-error-500 hover:!bg-error-600"
+          >
+            Storniraj
+          </Button>
+        </div>
+      )}
+      {cancellable && isCancelModalOpen && (
+        <CancelBillModal
+          isOpen
+          needsNewId={cancellable.needsNewId}
+          isCancelling={isCancelling}
+          error={cancelError}
+          onClose={() => {
+            if (!isCancelling) {
+              setIsCancelModalOpen(false);
+              setCancelError(null);
+            }
+          }}
+          onConfirm={handleCancelBill}
+        />
+      )}
       <div className="space-y-6">
         <ComponentCard title="Osnovni podaci">
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">

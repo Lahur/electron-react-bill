@@ -17,7 +17,8 @@ export const fetchBankStatements = createAsyncThunk(
 
 export const uploadBankStatements = createAsyncThunk(
     'bankStatement/upload',
-    (files: File[]) => BankStatementService.upload(files),
+    ({ files, email }: { files: File[]; email?: string }) =>
+        BankStatementService.upload(files, email),
 );
 
 const bankStatementSlice = createSlice({

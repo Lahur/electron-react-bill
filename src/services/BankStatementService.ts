@@ -9,9 +9,10 @@ export const BankStatementService = {
     return response.data;
   },
 
-  async upload(files: File[]): Promise<BankStatementResponse[]> {
+  async upload(files: File[], email?: string): Promise<BankStatementResponse[]> {
     const formData = new FormData();
     files.forEach((file) => formData.append("files", file));
+    if (email) formData.append("email", email);
     const response = await bankStatementApi.post<BankStatementResponse[]>("/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
