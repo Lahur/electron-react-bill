@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('electron', {
   openOrderDocument: () => ipcRenderer.invoke('dialog:open-order-document'),
   openPosTransactionBill: () => ipcRenderer.invoke('dialog:open-pos-transaction-bill'),
   openAccountsStatementBill: () => ipcRenderer.invoke('dialog:open-accounts-statement-bill'),
+  checkForUpdates: () => ipcRenderer.invoke('updates:check'),
   auth: {
     login: () => ipcRenderer.invoke('auth:login'),
     logout: () => ipcRenderer.invoke('auth:logout'),

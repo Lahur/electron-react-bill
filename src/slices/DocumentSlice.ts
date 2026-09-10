@@ -12,11 +12,19 @@ const initialState: DocumentState = {
     reportItems: []
 };
 
-export const generateAndSendDocuments = createAsyncThunk<void, string, { state: RootState }>(
+interface GenerateAndSendArgs {
+    email: string;
+    separated?: boolean;
+}
+
+// Backend caps individual (separated) sends at 6 files per email.
+export const MAX_SEPARATED_FILES = 6;
+
+export const generateAndSendDocuments = createAsyncThunk<void, GenerateAndSendArgs, { state: RootState }>(
     'document/generateAndSend',
-    (email, { getState }) => {
+    ({ email, separated }, { getState }) => {
         const { reportItems } = getState().document;
-        const request: SendBillReportsRequest = { reports: reportItems, email };
+        const request: SendBillReportsRequest = { reports: reportItems, email, separated };
         return DocumentService.generateAndSend(request);
     }
 )

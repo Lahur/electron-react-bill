@@ -47,11 +47,18 @@ jobs:
               | tee /etc/apt/sources.list.d/github-cli.list
             apt-get update -qq && apt-get install -y -qq gh
             gh release create "$CIRCLE_TAG" --title "$CIRCLE_TAG" --generate-notes || true
+            # nullglob: an absent artifact category expands to nothing instead of
+            # a literal pattern that would fail the upload.
+            shopt -s nullglob
+            # latest*.yml + *.blockmap are the electron-updater feed metadata;
+            # without them installed apps cannot discover this release.
             gh release upload "$CIRCLE_TAG" \
               release/*.deb \
               release/*.AppImage \
               release/*.rpm \
               release/*.exe \
+              release/*.blockmap \
+              release/latest*.yml \
               --clobber
 
 workflows:

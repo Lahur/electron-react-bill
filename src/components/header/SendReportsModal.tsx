@@ -3,8 +3,9 @@ import {Modal} from "../ui/modal";
 import Label from "../form/Label";
 import EmailAutocompleteInput from "../form/input/EmailAutocompleteInput";
 import Button from "../ui/button/Button";
+import Checkbox from "../form/input/Checkbox";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {generateAndSendDocuments} from "../../slices/DocumentSlice";
+import {generateAndSendDocuments, MAX_SEPARATED_FILES} from "../../slices/DocumentSlice";
 import {fetchRecipients} from "../../slices/RecipientSlice";
 import {billReportTypeLabels} from "../../models/enums/BillReportType";
 
@@ -18,8 +19,13 @@ export default function SendReportsModal({ isOpen, onClose }: SendReportsModalPr
   const reportItems = useAppSelector((state) => state.document.reportItems);
   const recipientEmails = useAppSelector((state) => state.recipient.emails);
   const [email, setEmail] = useState("");
+  const [separated, setSeparated] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+
+  const tooManyForSeparate = reportItems.length > MAX_SEPARATED_FILES;
+  // The backend rejects individual sends above the cap, so fall back to merged.
+  const effectiveSeparated = separated && !tooManyForSeparate;
 
   useEffect(() => {
     if (isOpen) dispatch(fetchRecipients());
@@ -29,8 +35,11 @@ export default function SendReportsModal({ isOpen, onClose }: SendReportsModalPr
     setSendError(null);
     setSending(true);
     try {
-      await dispatch(generateAndSendDocuments(email)).unwrap();
+      await dispatch(
+        generateAndSendDocuments({ email, separated: effectiveSeparated }),
+      ).unwrap();
       setEmail("");
+      setSeparated(false);
       onClose();
     } catch {
       setSendError("Slanje dokumenata nije uspjelo. Pokušajte ponovno.");
@@ -76,6 +85,21 @@ export default function SendReportsModal({ isOpen, onClose }: SendReportsModalPr
           onChange={setEmail}
           suggestions={recipientEmails}
         />
+      </div>
+
+      <div className="mb-4">
+        <Checkbox
+          id="reports-separated"
+          label="Odvojeno"
+          checked={effectiveSeparated}
+          onChange={setSeparated}
+          disabled={reportItems.length === 0 || tooManyForSeparate}
+        />
+        {tooManyForSeparate && (
+          <p className="mt-1.5 text-gray-500 text-theme-xs dark:text-gray-400">
+            Zasebno slanje moguće je za najviše {MAX_SEPARATED_FILES} dokumenata.
+          </p>
+        )}
       </div>
 
       {sendError && (

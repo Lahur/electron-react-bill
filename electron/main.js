@@ -1,7 +1,9 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs/promises');
+const { existsSync } = require('fs');
 const Sentry = require('@sentry/electron/main');
+const { autoUpdater } = require('electron-updater');
 const { createAuthManager } = require('./auth');
 
 Sentry.init({
@@ -37,7 +39,82 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const isDev = !app.isPackaged;
 const apiBaseUrl = process.env.VITE_API_BASE_URL;
 
+// On Linux electron-updater self-updates an AppImage (APPIMAGE is set only when
+// launched as one) and, via dpkg/rpm + a pkexec prompt, a deb/rpm install —
+// electron-builder drops a `package-type` marker into those packages. A binary
+// run straight from an extracted archive (or dev) has neither and can't update.
+function linuxUpdaterSupported() {
+  if (process.env.APPIMAGE) {
+    return true;
+  }
+  try {
+    return existsSync(path.join(process.resourcesPath, 'package-type'));
+  } catch {
+    return false;
+  }
+}
+
+const canAutoUpdate =
+  !isDev &&
+  (process.platform === 'win32' ||
+    (process.platform === 'linux' && linuxUpdaterSupported()));
+
 let mainWindow;
+let updateDownloaded = false;
+
+function reportUpdaterError(error) {
+  Sentry.captureException(error, {
+    mechanism: { type: 'auto-updater', handled: true },
+    tags: { source: 'auto-updater' },
+  });
+}
+
+function checkForUpdates() {
+  return autoUpdater.checkForUpdates().catch((error) => {
+    reportUpdaterError(error);
+    return null;
+  });
+}
+
+function setupAutoUpdater() {
+  if (!canAutoUpdate) {
+    return;
+  }
+
+  autoUpdater.autoDownload = true;
+  // If the user dismisses the restart prompt, still apply the update on quit.
+  autoUpdater.autoInstallOnAppQuit = true;
+
+  autoUpdater.on('error', reportUpdaterError);
+
+  autoUpdater.on('update-downloaded', async ({ version }) => {
+    updateDownloaded = true;
+
+    if (!mainWindow || mainWindow.isDestroyed()) {
+      return;
+    }
+
+    const { response } = await dialog.showMessageBox(mainWindow, {
+      type: 'info',
+      buttons: ['Ponovno pokreni sada', 'Kasnije'],
+      defaultId: 0,
+      cancelId: 1,
+      title: 'Ažuriranje spremno',
+      message: `Preuzeta je nova verzija (${version}).`,
+      detail: 'Ponovno pokrenite aplikaciju da biste dovršili ažuriranje.',
+    });
+
+    if (response === 0) {
+      // isForceRunAfter: relaunch once installed (deb/rpm won't otherwise).
+      autoUpdater.quitAndInstall(false, true);
+    }
+  });
+
+  checkForUpdates();
+  // This app can stay open for days; re-check periodically so a long-running
+  // session still picks up releases.
+  setInterval(checkForUpdates, 6 * 60 * 60 * 1000);
+}
 
 // Login opens in an in-app BrowserWindow rather than the system browser; the
 // redirect to electron-react-bill://callback is intercepted before it ever
@@ -110,6 +187,26 @@ function createWindow() {
 handle('auth:login', () => authManager.login());
 handle('auth:logout', () => authManager.logout());
 handle('auth:get-token', () => authManager.getToken());
+
+// Manual "check for updates" trigger for the renderer. The download (if any)
+// runs in the background and surfaces its own restart prompt when ready.
+handle('updates:check', async () => {
+  const currentVersion = app.getVersion();
+
+  if (!canAutoUpdate) {
+    return { supported: false, currentVersion, updateAvailable: false, updateDownloaded };
+  }
+
+  const result = await checkForUpdates();
+
+  return {
+    supported: true,
+    currentVersion,
+    updateAvailable: result?.isUpdateAvailable ?? false,
+    availableVersion: result?.updateInfo?.version ?? null,
+    updateDownloaded,
+  };
+});
 
 // showOpenDialog is modal to its parent window. If a second dialog is
 // requested while one is still open (e.g. two "select file" buttons clicked
@@ -198,7 +295,10 @@ handle('dialog:open-accounts-statement-bill', async () => {
   };
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow();
+  setupAutoUpdater();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

@@ -8,6 +8,13 @@ declare global {
       openOrderDocument: () => Promise<{ name: string; data: Uint8Array<ArrayBuffer> } | null>;
       openPosTransactionBill: () => Promise<{ name: string; data: Uint8Array<ArrayBuffer> } | null>;
       openAccountsStatementBill: () => Promise<{ name: string; data: Uint8Array<ArrayBuffer> } | null>;
+      checkForUpdates: () => Promise<{
+        supported: boolean;
+        currentVersion: string;
+        updateAvailable: boolean;
+        availableVersion?: string | null;
+        updateDownloaded: boolean;
+      }>;
       auth: {
         login: () => Promise<{ name?: string; email?: string; picture?: string }>;
         logout: () => Promise<void>;

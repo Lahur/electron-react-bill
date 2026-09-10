@@ -1,7 +1,10 @@
 import {useEffect} from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.css";
+import {Croatian} from "flatpickr/dist/l10n/hr.js";
 import type {DateOption, Hook} from "flatpickr/dist/types/options";
+
+flatpickr.localize(Croatian);
 import Label from "./Label";
 import {CalenderIcon, TimeIcon} from "../../icons";
 

@@ -62,35 +62,35 @@ export default function ReviewBill({
     submitError: string | null;
 }) {
     return (
-        <ComponentCard title="Review Bill">
-            <Section title="Bill Details" divider={false}>
-                <Field label="Bill Number" value={billReview.billNumber} />
-                <Field label="Profile" value={billProfileLabels[billReview.profile]} />
-                <Field label="Bill Date" value={formatDate(billReview.billDate)} />
-                <Field label="Bill Time" value={formatTime(billReview.billTime)} />
-                <Field label="Due Date" value={formatDate(billReview.dueDate)} />
-                <Field label="Reference" value={billReview.orderNumber} />
+        <ComponentCard title="Pregled računa">
+            <Section title="Podaci o računu" divider={false}>
+                <Field label="Broj računa" value={billReview.billNumber} />
+                <Field label="Profil" value={billProfileLabels[billReview.profile]} />
+                <Field label="Datum računa" value={formatDate(billReview.billDate)} />
+                <Field label="Vrijeme računa" value={formatTime(billReview.billTime)} />
+                <Field label="Datum dospijeća" value={formatDate(billReview.dueDate)} />
+                <Field label="Referenca" value={billReview.orderNumber} />
             </Section>
 
-            <Section title="Buyer">
-                <Field label="Buyer OIB" value={billReview.buyerOib} />
-                <Field label="Buyer Name" value={billReview.buyerName} />
-                <Field label="Buyer Address" value={billReview.buyerAddress} />
-                <Field label="Buyer City" value={billReview.buyerCity} />
-                <Field label="Buyer Postal Code" value={billReview.buyerPostalZone} />
+            <Section title="Kupac">
+                <Field label="OIB kupca" value={billReview.buyerOib} />
+                <Field label="Naziv kupca" value={billReview.buyerName} />
+                <Field label="Adresa kupca" value={billReview.buyerAddress} />
+                <Field label="Grad kupca" value={billReview.buyerCity} />
+                <Field label="Poštanski broj kupca" value={billReview.buyerPostalZone} />
             </Section>
 
-            <Section title="Item">
-                <Field label="Item Name" value={billReview.name} />
-                <Field label="Item Description" value={billReview.description} />
-                {billReview.note && <Field label="Note" value={billReview.note} />}
+            <Section title="Stavka">
+                <Field label="Naziv stavke" value={billReview.name} />
+                <Field label="Opis stavke" value={billReview.description} />
+                {billReview.note && <Field label="Napomena" value={billReview.note} />}
             </Section>
 
-            <Section title="Amounts">
-                <Field label="Base Amount" value={formatAmount(billReview.baseAmount)} />
-                <Field label="VAT Category" value={vatCategoryLabels[billReview.pdvType]} />
-                <Field label="Tax Amount" value={formatAmount(billReview.taxAmount)} />
-                <Field label="Total Amount" value={formatAmount(billReview.totalAmount)} />
+            <Section title="Iznosi">
+                <Field label="Osnovica" value={formatAmount(billReview.baseAmount)} />
+                <Field label="Kategorija PDV-a" value={vatCategoryLabels[billReview.pdvType]} />
+                <Field label="Iznos PDV-a" value={formatAmount(billReview.taxAmount)} />
+                <Field label="Ukupan iznos" value={formatAmount(billReview.totalAmount)} />
             </Section>
 
             {submitError && (
@@ -99,10 +99,10 @@ export default function ReviewBill({
 
             <div className="flex items-center gap-3 border-t border-gray-100 pt-6 dark:border-gray-800">
                 <Button type="button" size="sm" variant="outline" onClick={onBack} disabled={submitting}>
-                    Back
+                    Natrag
                 </Button>
                 <Button type="button" size="sm" variant="primary" className="ml-auto" onClick={onConfirm} disabled={submitting}>
-                    Confirm
+                    Potvrdi
                 </Button>
             </div>
         </ComponentCard>
