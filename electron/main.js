@@ -165,8 +165,9 @@ function createWindow() {
         'Access-Control-Allow-Origin': ['*'],
         'Access-Control-Allow-Methods': ['GET, POST, PUT, PATCH, DELETE, OPTIONS'],
         // Wildcard here does NOT cover Authorization per the fetch spec, it
-        // must be named explicitly or the preflight still fails.
-        'Access-Control-Allow-Headers': ['Content-Type, Authorization'],
+        // must be named explicitly or the preflight still fails. X-Tenant-Id is
+        // the custom tenant header httpClient.ts adds to every request.
+        'Access-Control-Allow-Headers': ['Content-Type, Authorization, X-Tenant-Id'],
         ...details.responseHeaders,
       },
     });

@@ -6,6 +6,22 @@ import {requestFinished, requestStarted} from "../features/ui/uiSlice";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
 
+// Keycloak user-attribute mapper puts the tenant into the access token under
+// this claim; the backend expects it echoed back as X-Tenant-Id.
+const TENANT_CLAIM = "tenant-id";
+
+function getTenantId(token: string): string | undefined {
+  try {
+    const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    const bytes = Uint8Array.from(atob(payload), (c) => c.charCodeAt(0));
+    const claims = JSON.parse(new TextDecoder().decode(bytes));
+    const tenantId = claims[TENANT_CLAIM];
+    return tenantId != null ? String(tenantId) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export function createApiClient(basePath: string) {
   const client = axios.create({
     baseURL: `${API_BASE_URL}${basePath}`,
@@ -15,6 +31,10 @@ export function createApiClient(basePath: string) {
     getDispatch()(requestStarted());
     const token = await getAccessTokenSilently();
     config.headers.set("Authorization", `Bearer ${token}`);
+    const tenantId = getTenantId(token);
+    if (tenantId) {
+      config.headers.set("X-Tenant-Id", tenantId);
+    }
     return config;
   });
 
