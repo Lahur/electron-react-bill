@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import {useNavigate} from "react-router";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
@@ -34,6 +35,7 @@ function formatDateTime(isoDateTime: string): string {
 
 export default function BankStatements() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const statements = useAppSelector((state) => state.bankStatement.statements);
   const reportItems = useAppSelector((state) => state.document.reportItems);
   const [isImporting, setIsImporting] = useState(false);
@@ -107,6 +109,9 @@ export default function BankStatements() {
                   Kreiran
                 </TableCell>
                 <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                  Poslano
+                </TableCell>
+                <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
                   Radnje
                 </TableCell>
               </TableRow>
@@ -114,7 +119,11 @@ export default function BankStatements() {
 
             <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
               {statements.map((statement) => (
-                <TableRow key={statement.id}>
+                <TableRow
+                  key={statement.id}
+                  className="cursor-pointer"
+                  onClick={() => navigate(`/bills/bank-statements/${statement.id}`)}
+                >
                   <TableCell className="py-3 font-medium text-gray-800 text-theme-sm dark:text-white/90">
                     {statement.statementId}
                   </TableCell>
@@ -133,11 +142,15 @@ export default function BankStatements() {
                   <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                     {formatDateTime(statement.createdAt)}
                   </TableCell>
+                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                    {statement.sentCount}
+                  </TableCell>
                   <TableCell className="py-3">
                     <button
                       type="button"
                       aria-label="Označi za slanje dokumenta"
-                      onClick={() => {
+                      onClick={(event) => {
+                        event.stopPropagation();
                         dispatch(
                           toggleReportItem({
                             id: statement.id,

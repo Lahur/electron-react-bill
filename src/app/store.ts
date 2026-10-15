@@ -10,6 +10,7 @@ import BusinessEntitySlice from "../slices/BusinessEntitySlice.ts";
 import BillInfoSlice from "../slices/BillInfoSlice.ts";
 import DocumentSlice from "../slices/DocumentSlice.ts";
 import BankStatementSlice from "../slices/BankStatementSlice.ts";
+import BankTransactionSlice from "../slices/BankTransactionSlice.ts";
 import PosTransactionSlice from "../slices/PosTransactionSlice.ts";
 import AccountsStatementSlice from "../slices/AccountsStatementSlice.ts";
 import CashWithdrawalBalanceSlice from "../slices/CashWithdrawalBalanceSlice.ts";
@@ -30,6 +31,7 @@ export const store = configureStore({
     billInfo: BillInfoSlice,
     document: DocumentSlice,
     bankStatement: BankStatementSlice,
+    bankTransaction: BankTransactionSlice,
     posTransaction: PosTransactionSlice,
     accountsStatement: AccountsStatementSlice,
     cashWithdrawalBalance: CashWithdrawalBalanceSlice,

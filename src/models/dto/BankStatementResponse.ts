@@ -6,4 +6,5 @@ export interface BankStatementResponse {
   periodFrom: string;
   periodTo: string;
   createdAt: string;
+  sentCount: number;
 }
