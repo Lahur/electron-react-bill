@@ -1,6 +1,5 @@
 import type {BillProfile} from "../enums/BillProfile";
 import type {VatCategory} from "../enums/VatCategory";
-import type {BillItemRequest} from "./BillItemRequest";
 
 export interface F2BillRequest {
   billDate: string;
@@ -8,8 +7,10 @@ export interface F2BillRequest {
   dueDate: string;
   note?: string;
   buyerOib: string;
-  items: BillItemRequest[];
+  baseAmount: number;
   vatCategory: VatCategory;
+  billItemName: string;
+  billItemDescription: string;
   billId: number;
   profile: BillProfile;
   orderNumber?: string;

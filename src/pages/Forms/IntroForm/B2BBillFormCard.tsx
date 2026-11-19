@@ -16,8 +16,6 @@ import {BillProfile, billProfileLabels} from "../../../models/enums/BillProfile"
 import {VatCategory, vatCategoryLabels} from "../../../models/enums/VatCategory";
 import {DocsIcon} from "../../../icons";
 import ReviewBill from "./ReviewBill.tsx";
-import BillItemsEditor from "./BillItemsEditor.tsx";
-import {useBillItems} from "./useBillItems.ts";
 import FormField from "@/components/form/FormField";
 
 function toIsoDate(date: Date): string {
@@ -47,7 +45,10 @@ interface BillFormState {
     buyerAddress: string;
     buyerCity: string;
     buyerPostalCode: string;
+    baseAmount: string;
     vatCategory: VatCategory | "";
+    billItemName: string;
+    billItemDescription: string;
 }
 
 const initialBillFormState: BillFormState = {
@@ -62,7 +63,10 @@ const initialBillFormState: BillFormState = {
     buyerAddress: "",
     buyerCity: "",
     buyerPostalCode: "",
+    baseAmount: "",
     vatCategory: "",
+    billItemName: "",
+    billItemDescription: "",
 };
 
 export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) {
@@ -73,7 +77,6 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
     const entity = business?.businessEntity;
 
     const [form, setForm] = useState<BillFormState>(initialBillFormState);
-    const billItems = useBillItems();
     const [errors, setErrors] = useState<Partial<Record<keyof BillFormState, boolean>>>({});
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
@@ -112,7 +115,10 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
         if (!form.billDate) newErrors.billDate = true;
         if (!form.billTime) newErrors.billTime = true;
         if (!form.dueDate) newErrors.dueDate = true;
+        if (form.baseAmount === "" || Number(form.baseAmount) < 0) newErrors.baseAmount = true;
         if (!form.vatCategory) newErrors.vatCategory = true;
+        if (!form.billItemName) newErrors.billItemName = true;
+        if (!form.billItemDescription) newErrors.billItemDescription = true;
         if (orderDocument && !form.orderNumber) newErrors.orderNumber = true;
         if (!entity) {
             if (!form.buyerName) newErrors.buyerName = true;
@@ -121,9 +127,7 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
             if (!form.buyerPostalCode) newErrors.buyerPostalCode = true;
         }
 
-        const itemsValid = billItems.validate();
-
-        if (Object.keys(newErrors).length > 0 || !itemsValid) {
+        if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
         }
@@ -145,8 +149,10 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
             buyerAddress: entity ? entity.headquatersAddress : form.buyerAddress,
             buyerCity: entity ? entity.headquatersCity : form.buyerCity,
             buyerPostalCode: entity ? entity.headquatersZip : form.buyerPostalCode,
+            baseAmount: Number(form.baseAmount),
             vatCategory: form.vatCategory as VatCategory,
-            items: billItems.toRequest(),
+            billItemName: form.billItemName,
+            billItemDescription: form.billItemDescription,
         };
 
         try {
@@ -317,9 +323,35 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
                         </>
                     )}
 
-                    <BillItemsEditor {...billItems} />
+                    <FormField label="Naziv stavke" htmlFor="billItemName" error={errors.billItemName ? "Naziv stavke je obavezan." : undefined}>
+                        <Input
+                            type="text"
+                            id="billItemName"
+                            value={form.billItemName}
+                            onChange={(e) => setField("billItemName", e.target.value)}
+                            aria-invalid={errors.billItemName || undefined}
+                        />
+                    </FormField>
+                    <FormField label="Opis stavke" htmlFor="billItemDescription" error={errors.billItemDescription ? "Opis stavke je obavezan." : undefined}>
+                        <Textarea
+                            id="billItemDescription"
+                            value={form.billItemDescription}
+                            onChange={(e) => setField("billItemDescription", e.target.value)}
+                            aria-invalid={errors.billItemDescription || undefined}
+                        />
+                    </FormField>
 
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <FormField label="Osnovica" htmlFor="baseAmount" error={errors.baseAmount ? "Osnovica mora biti 0 ili veća." : undefined}>
+                            <Input
+                                type="number"
+                                id="baseAmount"
+                                min="0"
+                                value={form.baseAmount}
+                                onChange={(e) => setField("baseAmount", e.target.value)}
+                                aria-invalid={errors.baseAmount || undefined}
+                            />
+                        </FormField>
                         <FormField label="Kategorija PDV-a" htmlFor="vatCategory" error={errors.vatCategory ? "Kategorija PDV-a je obavezna." : undefined}>
                             <OptionSelect
                                 id="vatCategory"

@@ -1,5 +1,4 @@
 import type {F1TaxRate} from "../enums/F1TaxRate";
-import type {BillItemRequest} from "./BillItemRequest";
 
 export interface F1BillRequest {
   billDate: string;
@@ -7,7 +6,9 @@ export interface F1BillRequest {
   dueDate: string;
   note?: string;
   buyerOib: string;
-  items: BillItemRequest[];
+  baseAmount: number;
+  billItemName: string;
+  billItemDescription: string;
   buyerName: string;
   buyerAddress: string;
   buyerCity: string;

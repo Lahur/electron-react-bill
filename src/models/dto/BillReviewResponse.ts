@@ -1,6 +1,5 @@
 import type {BillProfile} from "../enums/BillProfile";
 import type {VatCategory} from "../enums/VatCategory";
-import type {BillItemRequest} from "./BillItemRequest";
 
 export interface BillReviewResponse {
   billNumber: string;
@@ -19,5 +18,6 @@ export interface BillReviewResponse {
   taxAmount: number;
   totalAmount: number;
   pdvType: VatCategory;
-  items: BillItemRequest[];
+  name: string;
+  description: string;
 }
