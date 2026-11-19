@@ -1,11 +1,11 @@
 import type {SubmitEvent} from "react";
 import {useRef, useState} from "react";
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
-import Label from "../../../components/form/Label.tsx";
-import Input from "../../../components/form/input/InputField.tsx";
-import Button from "../../../components/ui/button/Button.tsx";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {checkBusinessEntityByOib} from "../../../slices/BusinessEntitySlice";
+import FormField from "@/components/form/FormField";
 
 function isValidOib(value: string): boolean {
     if (!/^\d{11}$/.test(value)) return false;
@@ -49,19 +49,17 @@ export default function OibForm({ onReset }: { onReset: () => void }) {
     return <ComponentCard title="Provjera OIB-a">
         <form ref={formRef} onSubmit={handleSubmit}>
         <div className="space-y-6">
-            <div>
-                <Label htmlFor="oib">OIB</Label>
+            <FormField label="OIB" htmlFor="oib" error={error ? "Neispravan OIB." : undefined}>
                 <Input
                     type="text"
                     id="oib"
                     name="oib"
-                    error={error}
-                    hint={error ? "Neispravan OIB." : ""}
                     disabled={!!checkResult}
+                    aria-invalid={error || undefined}
                 />
-            </div>
+            </FormField>
             <div className="flex items-center gap-3">
-                <Button type="submit" size="sm" variant="primary" disabled={!!checkResult}>
+                <Button type="submit" size="sm" disabled={!!checkResult}>
                     Provjeri
                 </Button>
                 {checkResult && (

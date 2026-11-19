@@ -2,12 +2,11 @@ import type {SubmitEvent} from "react";
 import {useCallback, useState} from "react";
 import {useNavigate} from "react-router";
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
-import Label from "../../../components/form/Label.tsx";
-import Input from "../../../components/form/input/InputField.tsx";
-import TextArea from "../../../components/form/input/TextArea.tsx";
-import Select from "../../../components/form/Select.tsx";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import OptionSelect from "@/components/form/OptionSelect";
 import DatePicker from "../../../components/form/date-picker.tsx";
-import Button from "../../../components/ui/button/Button.tsx";
+import {Button} from "@/components/ui/button";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {resetBusinessEntityCheck} from "../../../slices/BusinessEntitySlice";
 import {createBill, reviewBill} from "../../../slices/B2BBillSlice";
@@ -17,6 +16,9 @@ import {BillProfile, billProfileLabels} from "../../../models/enums/BillProfile"
 import {VatCategory, vatCategoryLabels} from "../../../models/enums/VatCategory";
 import {DocsIcon} from "../../../icons";
 import ReviewBill from "./ReviewBill.tsx";
+import BillItemsEditor from "./BillItemsEditor.tsx";
+import {useBillItems} from "./useBillItems.ts";
+import FormField from "@/components/form/FormField";
 
 function toIsoDate(date: Date): string {
     const year = date.getFullYear();
@@ -45,10 +47,7 @@ interface BillFormState {
     buyerAddress: string;
     buyerCity: string;
     buyerPostalCode: string;
-    baseAmount: string;
     vatCategory: VatCategory | "";
-    billItemName: string;
-    billItemDescription: string;
 }
 
 const initialBillFormState: BillFormState = {
@@ -63,10 +62,7 @@ const initialBillFormState: BillFormState = {
     buyerAddress: "",
     buyerCity: "",
     buyerPostalCode: "",
-    baseAmount: "",
     vatCategory: "",
-    billItemName: "",
-    billItemDescription: "",
 };
 
 export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) {
@@ -77,6 +73,7 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
     const entity = business?.businessEntity;
 
     const [form, setForm] = useState<BillFormState>(initialBillFormState);
+    const billItems = useBillItems();
     const [errors, setErrors] = useState<Partial<Record<keyof BillFormState, boolean>>>({});
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
@@ -115,10 +112,7 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
         if (!form.billDate) newErrors.billDate = true;
         if (!form.billTime) newErrors.billTime = true;
         if (!form.dueDate) newErrors.dueDate = true;
-        if (form.baseAmount === "" || Number(form.baseAmount) < 0) newErrors.baseAmount = true;
         if (!form.vatCategory) newErrors.vatCategory = true;
-        if (!form.billItemName) newErrors.billItemName = true;
-        if (!form.billItemDescription) newErrors.billItemDescription = true;
         if (orderDocument && !form.orderNumber) newErrors.orderNumber = true;
         if (!entity) {
             if (!form.buyerName) newErrors.buyerName = true;
@@ -127,7 +121,9 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
             if (!form.buyerPostalCode) newErrors.buyerPostalCode = true;
         }
 
-        if (Object.keys(newErrors).length > 0) {
+        const itemsValid = billItems.validate();
+
+        if (Object.keys(newErrors).length > 0 || !itemsValid) {
             setErrors(newErrors);
             return;
         }
@@ -149,10 +145,8 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
             buyerAddress: entity ? entity.headquatersAddress : form.buyerAddress,
             buyerCity: entity ? entity.headquatersCity : form.buyerCity,
             buyerPostalCode: entity ? entity.headquatersZip : form.buyerPostalCode,
-            baseAmount: Number(form.baseAmount),
             vatCategory: form.vatCategory as VatCategory,
-            billItemName: form.billItemName,
-            billItemDescription: form.billItemDescription,
+            items: billItems.toRequest(),
         };
 
         try {
@@ -206,29 +200,26 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
             <form onSubmit={handleSubmit}>
                 <div className="space-y-6">
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
-                            <Label htmlFor="billId">Broj računa</Label>
+                        <FormField label="Broj računa" htmlFor="billId" error={errors.billId ? "Broj računa je obavezan." : undefined}>
                             <Input
                                 type="number"
                                 id="billId"
                                 min="1"
                                 value={form.billId}
                                 onChange={(e) => setField("billId", e.target.value)}
-                                error={errors.billId}
-                                hint={errors.billId ? "Broj računa je obavezan." : ""}
+                                aria-invalid={errors.billId || undefined}
                             />
-                        </div>
-                        <div>
-                            <Label htmlFor="profile">Profil</Label>
-                            <Select
+                        </FormField>
+                        <FormField label="Profil" htmlFor="profile" error={errors.profile ? "Profil je obavezan." : undefined}>
+                            <OptionSelect
+                                id="profile"
                                 options={billProfileOptions}
+                                value={form.profile}
                                 placeholder="Odaberite profil"
+                                invalid={errors.profile}
                                 onChange={(value) => setField("profile", value as BillProfile)}
                             />
-                            {errors.profile && (
-                                <p className="mt-1.5 text-xs text-error-500">Profil je obavezan.</p>
-                            )}
-                        </div>
+                        </FormField>
                     </div>
 
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -238,6 +229,7 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
                                 label="Datum računa"
                                 placeholder="Odaberite datum računa"
                                 onChange={handleBillDateChange}
+                                error={errors.billDate}
                             />
                             {errors.billDate && (
                                 <p className="mt-1.5 text-xs text-error-500">Datum računa je obavezan.</p>
@@ -251,6 +243,7 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
                                 noCalendar
                                 enableTime
                                 onChange={handleBillTimeChange}
+                                error={errors.billTime}
                             />
                             {errors.billTime && (
                                 <p className="mt-1.5 text-xs text-error-500">Vrijeme računa je obavezno.</p>
@@ -265,6 +258,7 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
                                 label="Datum dospijeća"
                                 placeholder="Odaberite datum dospijeća"
                                 onChange={handleDueDateChange}
+                                error={errors.dueDate}
                             />
                             {errors.dueDate && (
                                 <p className="mt-1.5 text-xs text-error-500">Datum dospijeća je obavezan.</p>
@@ -272,130 +266,88 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
                         </div>
                     </div>
 
-                    <div>
-                        <Label htmlFor="note">Napomena</Label>
-                        <TextArea
+                    <FormField label="Napomena" htmlFor="note">
+                        <Textarea
+                            id="note"
                             value={form.note}
-                            onChange={(value) => setField("note", value)}
+                            onChange={(e) => setField("note", e.target.value)}
                         />
-                    </div>
+                    </FormField>
 
                     {!entity && (
                         <>
-                            <div>
-                                <Label htmlFor="buyerName">Naziv kupca</Label>
+                            <FormField label="Naziv kupca" htmlFor="buyerName" error={errors.buyerName ? "Naziv kupca je obavezan." : undefined}>
                                 <Input
                                     type="text"
                                     id="buyerName"
                                     value={form.buyerName}
                                     onChange={(e) => setField("buyerName", e.target.value)}
-                                    error={errors.buyerName}
-                                    hint={errors.buyerName ? "Naziv kupca je obavezan." : ""}
+                                    aria-invalid={errors.buyerName || undefined}
                                 />
-                            </div>
+                            </FormField>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div>
-                                    <Label htmlFor="buyerAddress">Adresa kupca</Label>
+                                <FormField label="Adresa kupca" htmlFor="buyerAddress" error={errors.buyerAddress ? "Adresa kupca je obavezna." : undefined}>
                                     <Input
                                         type="text"
                                         id="buyerAddress"
                                         value={form.buyerAddress}
                                         onChange={(e) => setField("buyerAddress", e.target.value)}
-                                        error={errors.buyerAddress}
-                                        hint={errors.buyerAddress ? "Adresa kupca je obavezna." : ""}
+                                        aria-invalid={errors.buyerAddress || undefined}
                                     />
-                                </div>
-                                <div>
-                                    <Label htmlFor="buyerCity">Grad kupca</Label>
+                                </FormField>
+                                <FormField label="Grad kupca" htmlFor="buyerCity" error={errors.buyerCity ? "Grad kupca je obavezan." : undefined}>
                                     <Input
                                         type="text"
                                         id="buyerCity"
                                         value={form.buyerCity}
                                         onChange={(e) => setField("buyerCity", e.target.value)}
-                                        error={errors.buyerCity}
-                                        hint={errors.buyerCity ? "Grad kupca je obavezan." : ""}
+                                        aria-invalid={errors.buyerCity || undefined}
                                     />
-                                </div>
+                                </FormField>
                             </div>
-                            <div>
-                                <Label htmlFor="buyerPostalCode">Poštanski broj kupca</Label>
+                            <FormField label="Poštanski broj kupca" htmlFor="buyerPostalCode" error={errors.buyerPostalCode ? "Poštanski broj kupca je obavezan." : undefined}>
                                 <Input
                                     type="text"
                                     id="buyerPostalCode"
                                     value={form.buyerPostalCode}
                                     onChange={(e) => setField("buyerPostalCode", e.target.value)}
-                                    error={errors.buyerPostalCode}
-                                    hint={errors.buyerPostalCode ? "Poštanski broj kupca je obavezan." : ""}
+                                    aria-invalid={errors.buyerPostalCode || undefined}
                                 />
-                            </div>
+                            </FormField>
                         </>
                     )}
 
-                    <div>
-                        <Label htmlFor="billItemName">Naziv stavke</Label>
-                        <Input
-                            type="text"
-                            id="billItemName"
-                            value={form.billItemName}
-                            onChange={(e) => setField("billItemName", e.target.value)}
-                            error={errors.billItemName}
-                            hint={errors.billItemName ? "Naziv stavke je obavezan." : ""}
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="billItemDescription">Opis stavke</Label>
-                        <TextArea
-                            value={form.billItemDescription}
-                            onChange={(value) => setField("billItemDescription", value)}
-                            error={errors.billItemDescription}
-                            hint={errors.billItemDescription ? "Opis stavke je obavezan." : ""}
-                        />
-                    </div>
+                    <BillItemsEditor {...billItems} />
 
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
-                            <Label htmlFor="baseAmount">Osnovica</Label>
-                            <Input
-                                type="number"
-                                id="baseAmount"
-                                min="0"
-                                value={form.baseAmount}
-                                onChange={(e) => setField("baseAmount", e.target.value)}
-                                error={errors.baseAmount}
-                                hint={errors.baseAmount ? "Osnovica mora biti 0 ili veća." : ""}
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="vatCategory">Kategorija PDV-a</Label>
-                            <Select
+                        <FormField label="Kategorija PDV-a" htmlFor="vatCategory" error={errors.vatCategory ? "Kategorija PDV-a je obavezna." : undefined}>
+                            <OptionSelect
+                                id="vatCategory"
                                 options={vatCategoryOptions}
+                                value={form.vatCategory}
                                 placeholder="Odaberite kategoriju PDV-a"
+                                invalid={errors.vatCategory}
                                 onChange={(value) => setField("vatCategory", value as VatCategory)}
                             />
-                            {errors.vatCategory && (
-                                <p className="mt-1.5 text-xs text-error-500">Kategorija PDV-a je obavezna.</p>
-                            )}
-                        </div>
+                        </FormField>
                     </div>
 
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
-                            <Label htmlFor="orderNumber">Referenca</Label>
+                        <FormField label="Referenca" htmlFor="orderNumber" error={errors.orderNumber ? "Referenca je obavezna kada je priložen dokument narudžbe." : undefined}>
                             <Input
                                 type="text"
                                 id="orderNumber"
                                 value={form.orderNumber}
                                 onChange={(e) => setField("orderNumber", e.target.value)}
-                                error={errors.orderNumber}
-                                hint={errors.orderNumber ? "Referenca je obavezna kada je priložen dokument narudžbe." : ""}
+                                aria-invalid={errors.orderNumber || undefined}
                             />
-                        </div>
-                        <div>
-                            <Label>Dokument narudžbe</Label>
-                            <Button type="button" size="sm" variant="outline" startIcon={<DocsIcon className="h-4 w-4" />} onClick={handlePickOrderDocument}>
+                        </FormField>
+                        <FormField label="Dokument narudžbe" htmlFor="orderDocument">
+                            <Button id="orderDocument" type="button" size="lg" variant="outline" className="w-fit" onClick={handlePickOrderDocument}>
+                                <DocsIcon className="size-4" />
                                 {orderDocument ? orderDocument.name : "Odaberite dokument"}
                             </Button>
-                        </div>
+                        </FormField>
                     </div>
 
                     {submitError && (
@@ -406,7 +358,7 @@ export default function B2BBillFormCard({ onCancel }: { onCancel: () => void }) 
                         <Button type="button" size="sm" variant="outline" onClick={onCancel} disabled={submitting}>
                             Odustani
                         </Button>
-                        <Button type="submit" size="sm" variant="primary" className="ml-auto" disabled={submitting}>
+                        <Button type="submit" size="sm" className="ml-auto" disabled={submitting}>
                             Pregledaj
                         </Button>
                     </div>

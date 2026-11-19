@@ -2,12 +2,11 @@ import type {SubmitEvent} from "react";
 import {useCallback, useState} from "react";
 import {useNavigate} from "react-router";
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
-import Label from "../../../components/form/Label.tsx";
-import Input from "../../../components/form/input/InputField.tsx";
-import TextArea from "../../../components/form/input/TextArea.tsx";
-import Select from "../../../components/form/Select.tsx";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import OptionSelect from "@/components/form/OptionSelect";
 import DatePicker from "../../../components/form/date-picker.tsx";
-import Button from "../../../components/ui/button/Button.tsx";
+import {Button} from "@/components/ui/button";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {resetBusinessEntityCheck} from "../../../slices/BusinessEntitySlice";
 import {createBill, reviewBill} from "../../../slices/B2CBillSlice";
@@ -15,6 +14,9 @@ import type {F1BillRequest} from "../../../models/dto/F1BillRequest";
 import type {BillReviewResponse} from "../../../models/dto/BillReviewResponse";
 import {F1TaxRate, f1TaxRateLabels} from "../../../models/enums/F1TaxRate";
 import ReviewBill from "./ReviewBill.tsx";
+import BillItemsEditor from "./BillItemsEditor.tsx";
+import {useBillItems} from "./useBillItems.ts";
+import FormField from "@/components/form/FormField";
 
 function toIsoDate(date: Date): string {
     const year = date.getFullYear();
@@ -36,10 +38,7 @@ interface B2CBillFormState {
     buyerAddress: string;
     buyerCity: string;
     buyerPostalCode: string;
-    baseAmount: string;
     taxRate: string;
-    billItemName: string;
-    billItemDescription: string;
 }
 
 const initialFormState: B2CBillFormState = {
@@ -51,10 +50,7 @@ const initialFormState: B2CBillFormState = {
     buyerAddress: "",
     buyerCity: "",
     buyerPostalCode: "",
-    baseAmount: "",
     taxRate: "",
-    billItemName: "",
-    billItemDescription: "",
 };
 
 export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) {
@@ -66,6 +62,7 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
 
     const [form, setForm] = useState<B2CBillFormState>(initialFormState);
     const [errors, setErrors] = useState<Partial<Record<keyof B2CBillFormState, boolean>>>({});
+    const billItems = useBillItems();
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [pendingRequest, setPendingRequest] = useState<F1BillRequest | null>(null);
@@ -94,10 +91,7 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
         if (!form.billDate) newErrors.billDate = true;
         if (!form.billTime) newErrors.billTime = true;
         if (!form.dueDate) newErrors.dueDate = true;
-        if (form.baseAmount === "" || Number(form.baseAmount) < 0) newErrors.baseAmount = true;
         if (!form.taxRate) newErrors.taxRate = true;
-        if (!form.billItemName) newErrors.billItemName = true;
-        if (!form.billItemDescription) newErrors.billItemDescription = true;
         if (!entity) {
             if (!form.buyerName) newErrors.buyerName = true;
             if (!form.buyerAddress) newErrors.buyerAddress = true;
@@ -105,7 +99,9 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
             if (!form.buyerPostalCode) newErrors.buyerPostalCode = true;
         }
 
-        if (Object.keys(newErrors).length > 0) {
+        const itemsValid = billItems.validate();
+
+        if (Object.keys(newErrors).length > 0 || !itemsValid) {
             setErrors(newErrors);
             return;
         }
@@ -124,10 +120,8 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
             buyerAddress: entity ? entity.headquatersAddress : form.buyerAddress,
             buyerCity: entity ? entity.headquatersCity : form.buyerCity,
             buyerPostalCode: entity ? entity.headquatersZip : form.buyerPostalCode,
-            baseAmount: Number(form.baseAmount),
             taxRate: Number(form.taxRate) as F1TaxRate,
-            billItemName: form.billItemName,
-            billItemDescription: form.billItemDescription,
+            items: billItems.toRequest(),
         };
 
         try {
@@ -187,6 +181,7 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
                                 label="Datum računa"
                                 placeholder="Odaberite datum računa"
                                 onChange={handleBillDateChange}
+                                error={errors.billDate}
                             />
                             {errors.billDate && (
                                 <p className="mt-1.5 text-xs text-error-500">Datum računa je obavezan.</p>
@@ -200,6 +195,7 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
                                 noCalendar
                                 enableTime
                                 onChange={handleBillTimeChange}
+                                error={errors.billTime}
                             />
                             {errors.billTime && (
                                 <p className="mt-1.5 text-xs text-error-500">Vrijeme računa je obavezno.</p>
@@ -213,116 +209,77 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
                             label="Datum dospijeća"
                             placeholder="Odaberite datum dospijeća"
                             onChange={handleDueDateChange}
+                            error={errors.dueDate}
                         />
                         {errors.dueDate && (
                             <p className="mt-1.5 text-xs text-error-500">Datum dospijeća je obavezan.</p>
                         )}
                     </div>
 
-                    <div>
-                        <Label htmlFor="note">Napomena</Label>
-                        <TextArea
+                    <FormField label="Napomena" htmlFor="note">
+                        <Textarea
+                            id="note"
                             value={form.note}
-                            onChange={(value) => setField("note", value)}
+                            onChange={(e) => setField("note", e.target.value)}
                         />
-                    </div>
+                    </FormField>
 
                     {!entity && (
                         <>
-                            <div>
-                                <Label htmlFor="buyerName">Naziv kupca</Label>
+                            <FormField label="Naziv kupca" htmlFor="buyerName" error={errors.buyerName ? "Naziv kupca je obavezan." : undefined}>
                                 <Input
                                     type="text"
                                     id="buyerName"
                                     value={form.buyerName}
                                     onChange={(e) => setField("buyerName", e.target.value)}
-                                    error={errors.buyerName}
-                                    hint={errors.buyerName ? "Naziv kupca je obavezan." : ""}
+                                    aria-invalid={errors.buyerName || undefined}
                                 />
-                            </div>
+                            </FormField>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div>
-                                    <Label htmlFor="buyerAddress">Adresa kupca</Label>
+                                <FormField label="Adresa kupca" htmlFor="buyerAddress" error={errors.buyerAddress ? "Adresa kupca je obavezna." : undefined}>
                                     <Input
                                         type="text"
                                         id="buyerAddress"
                                         value={form.buyerAddress}
                                         onChange={(e) => setField("buyerAddress", e.target.value)}
-                                        error={errors.buyerAddress}
-                                        hint={errors.buyerAddress ? "Adresa kupca je obavezna." : ""}
+                                        aria-invalid={errors.buyerAddress || undefined}
                                     />
-                                </div>
-                                <div>
-                                    <Label htmlFor="buyerCity">Grad kupca</Label>
+                                </FormField>
+                                <FormField label="Grad kupca" htmlFor="buyerCity" error={errors.buyerCity ? "Grad kupca je obavezan." : undefined}>
                                     <Input
                                         type="text"
                                         id="buyerCity"
                                         value={form.buyerCity}
                                         onChange={(e) => setField("buyerCity", e.target.value)}
-                                        error={errors.buyerCity}
-                                        hint={errors.buyerCity ? "Grad kupca je obavezan." : ""}
+                                        aria-invalid={errors.buyerCity || undefined}
                                     />
-                                </div>
+                                </FormField>
                             </div>
-                            <div>
-                                <Label htmlFor="buyerPostalCode">Poštanski broj kupca</Label>
+                            <FormField label="Poštanski broj kupca" htmlFor="buyerPostalCode" error={errors.buyerPostalCode ? "Poštanski broj kupca je obavezan." : undefined}>
                                 <Input
                                     type="text"
                                     id="buyerPostalCode"
                                     value={form.buyerPostalCode}
                                     onChange={(e) => setField("buyerPostalCode", e.target.value)}
-                                    error={errors.buyerPostalCode}
-                                    hint={errors.buyerPostalCode ? "Poštanski broj kupca je obavezan." : ""}
+                                    aria-invalid={errors.buyerPostalCode || undefined}
                                 />
-                            </div>
+                            </FormField>
                         </>
                     )}
 
-                    <div>
-                        <Label htmlFor="billItemName">Naziv stavke</Label>
-                        <Input
-                            type="text"
-                            id="billItemName"
-                            value={form.billItemName}
-                            onChange={(e) => setField("billItemName", e.target.value)}
-                            error={errors.billItemName}
-                            hint={errors.billItemName ? "Naziv stavke je obavezan." : ""}
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="billItemDescription">Opis stavke</Label>
-                        <TextArea
-                            value={form.billItemDescription}
-                            onChange={(value) => setField("billItemDescription", value)}
-                            error={errors.billItemDescription}
-                            hint={errors.billItemDescription ? "Opis stavke je obavezan." : ""}
-                        />
-                    </div>
+                    <BillItemsEditor {...billItems} />
 
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
-                            <Label htmlFor="baseAmount">Osnovica</Label>
-                            <Input
-                                type="number"
-                                id="baseAmount"
-                                min="0"
-                                value={form.baseAmount}
-                                onChange={(e) => setField("baseAmount", e.target.value)}
-                                error={errors.baseAmount}
-                                hint={errors.baseAmount ? "Osnovica mora biti 0 ili veća." : ""}
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="taxRate">Porezna stopa</Label>
-                            <Select
+                        <FormField label="Porezna stopa" htmlFor="taxRate" error={errors.taxRate ? "Porezna stopa je obavezna." : undefined}>
+                            <OptionSelect
+                                id="taxRate"
                                 options={taxRateOptions}
+                                value={form.taxRate}
                                 placeholder="Odaberite poreznu stopu"
+                                invalid={errors.taxRate}
                                 onChange={(value) => setField("taxRate", value)}
                             />
-                            {errors.taxRate && (
-                                <p className="mt-1.5 text-xs text-error-500">Porezna stopa je obavezna.</p>
-                            )}
-                        </div>
+                        </FormField>
                     </div>
 
                     {submitError && (
@@ -333,7 +290,7 @@ export default function B2CBillFormCard({ onCancel }: { onCancel: () => void }) 
                         <Button type="button" size="sm" variant="outline" onClick={onCancel} disabled={submitting}>
                             Odustani
                         </Button>
-                        <Button type="submit" size="sm" variant="primary" className="ml-auto" disabled={submitting}>
+                        <Button type="submit" size="sm" className="ml-auto" disabled={submitting}>
                             Pregledaj
                         </Button>
                     </div>

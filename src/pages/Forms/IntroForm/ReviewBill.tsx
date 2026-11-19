@@ -1,5 +1,5 @@
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
-import Button from "../../../components/ui/button/Button.tsx";
+import {Button} from "@/components/ui/button";
 import type {BillReviewResponse} from "../../../models/dto/BillReviewResponse.ts";
 import {billProfileLabels} from "../../../models/enums/BillProfile";
 import {vatCategoryLabels} from "../../../models/enums/VatCategory";
@@ -80,11 +80,27 @@ export default function ReviewBill({
                 <Field label="Poštanski broj kupca" value={billReview.buyerPostalZone} />
             </Section>
 
-            <Section title="Stavka">
-                <Field label="Naziv stavke" value={billReview.name} />
-                <Field label="Opis stavke" value={billReview.description} />
-                {billReview.note && <Field label="Napomena" value={billReview.note} />}
-            </Section>
+            <div className="border-t border-gray-100 pt-6 dark:border-gray-800">
+                <h4 className="mb-4 text-sm font-semibold text-gray-800 dark:text-white/90">Stavke</h4>
+                <div className="space-y-3">
+                    {(billReview.items ?? []).map((item, index) => (
+                        <div
+                            key={index}
+                            className="grid grid-cols-1 gap-4 rounded-xl border border-gray-200 p-4 sm:grid-cols-3 dark:border-gray-800"
+                        >
+                            <Field label={`Naziv stavke ${index + 1}`} value={item.billItemName} />
+                            <Field label="Opis stavke" value={item.billItemDescription} />
+                            <Field label="Osnovica" value={formatAmount(item.baseAmount)} />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {billReview.note && (
+                <Section title="Napomena">
+                    <Field label="Napomena" value={billReview.note} />
+                </Section>
+            )}
 
             <Section title="Iznosi">
                 <Field label="Osnovica" value={formatAmount(billReview.baseAmount)} />
@@ -101,7 +117,7 @@ export default function ReviewBill({
                 <Button type="button" size="sm" variant="outline" onClick={onBack} disabled={submitting}>
                     Natrag
                 </Button>
-                <Button type="button" size="sm" variant="primary" className="ml-auto" onClick={onConfirm} disabled={submitting}>
+                <Button type="button" size="sm" className="ml-auto" onClick={onConfirm} disabled={submitting}>
                     Potvrdi
                 </Button>
             </div>

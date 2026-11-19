@@ -1,6 +1,6 @@
 import {useCallback, useState} from "react";
-import {Modal} from "../ui/modal";
-import Button from "../ui/button/Button";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
 import DatePicker from "../form/date-picker.tsx";
 import type {BillSearchParams} from "../../models/dto/BillSearchParams";
 
@@ -40,9 +40,9 @@ function BillsFilterForm({onClose, onApply, initial}: Omit<BillsFilterModalProps
 
   return (
     <>
-      <h4 className="mb-6 text-lg font-medium text-gray-800 dark:text-white/90">
-        Filtriraj račune
-      </h4>
+      <DialogHeader>
+        <DialogTitle>Filtriraj račune</DialogTitle>
+      </DialogHeader>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <DatePicker
@@ -61,22 +61,24 @@ function BillsFilterForm({onClose, onApply, initial}: Omit<BillsFilterModalProps
         />
       </div>
 
-      <div className="mt-8 flex flex-wrap items-center justify-end gap-3">
+      <DialogFooter className="mt-4">
         <Button variant="outline" onClick={onClose}>
           Odustani
         </Button>
-        <Button variant="primary" onClick={handleApply}>
+        <Button onClick={handleApply}>
           Primijeni
         </Button>
-      </div>
+      </DialogFooter>
     </>
   );
 }
 
 export default function BillsFilterModal({isOpen, ...formProps}: BillsFilterModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={formProps.onClose} className="m-4 max-w-[500px] p-6 sm:p-8">
-      <BillsFilterForm {...formProps} />
-    </Modal>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && formProps.onClose()}>
+      <DialogContent className="sm:max-w-125 sm:p-8">
+        <BillsFilterForm {...formProps} />
+      </DialogContent>
+    </Dialog>
   );
 }

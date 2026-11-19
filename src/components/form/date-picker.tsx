@@ -1,12 +1,13 @@
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import {Croatian} from "flatpickr/dist/l10n/hr.js";
 import type {DateOption, Hook} from "flatpickr/dist/types/options";
+import {Field, FieldLabel} from "@/components/ui/field";
+import {Input} from "@/components/ui/input";
+import {CalendarIcon, TimeIcon} from "@/icons";
 
 flatpickr.localize(Croatian);
-import Label from "./Label";
-import {CalenderIcon, TimeIcon} from "../../icons";
 
 type PropsType = {
   id: string;
@@ -18,6 +19,7 @@ type PropsType = {
   defaultDate?: DateOption;
   label?: string;
   placeholder?: string;
+  error?: boolean;
 };
 
 export default function DatePicker({
@@ -30,9 +32,13 @@ export default function DatePicker({
   label,
   defaultDate,
   placeholder,
+  error = false,
 }: PropsType) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
-    const flatPickr = flatpickr(`#${id}`, {
+    if (!inputRef.current) return;
+    const instance = flatpickr(inputRef.current, {
       mode: mode || "single",
       monthSelectorType: "static",
       dateFormat: dateFormat ?? (noCalendar ? "H:i" : "d.m.Y."),
@@ -43,28 +49,25 @@ export default function DatePicker({
       onChange,
     });
 
-    return () => {
-      if (!Array.isArray(flatPickr)) {
-        flatPickr.destroy();
-      }
-    };
-  }, [mode, enableTime, noCalendar, dateFormat, onChange, id, defaultDate]);
+    return () => instance.destroy();
+  }, [mode, enableTime, noCalendar, dateFormat, onChange, defaultDate]);
 
   return (
-    <div>
-      {label && <Label htmlFor={id}>{label}</Label>}
-
+    <Field data-invalid={error || undefined} className="gap-1.5">
+      {label && <FieldLabel htmlFor={id}>{label}</FieldLabel>}
       <div className="relative">
-        <input
+        <Input
+          ref={inputRef}
           id={id}
+          type="text"
           placeholder={placeholder}
-          className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30  bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700  dark:focus:border-brand-800"
+          aria-invalid={error || undefined}
+          className="pe-10"
         />
-
-        <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
-          {noCalendar ? <TimeIcon className="size-6" /> : <CalenderIcon className="size-6" />}
+        <span className="pointer-events-none absolute inset-e-3.5 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+          {noCalendar ? <TimeIcon className="size-5" /> : <CalendarIcon className="size-5" />}
         </span>
       </div>
-    </div>
+    </Field>
   );
 }

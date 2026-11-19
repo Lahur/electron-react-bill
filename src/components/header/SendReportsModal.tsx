@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
-import {Modal} from "../ui/modal";
-import Label from "../form/Label";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Field, FieldDescription, FieldLabel} from "@/components/ui/field";
 import EmailAutocompleteInput from "../form/input/EmailAutocompleteInput";
-import Button from "../ui/button/Button";
-import Checkbox from "../form/input/Checkbox";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {generateAndSendDocuments, MAX_SEPARATED_FILES} from "../../slices/DocumentSlice";
 import {fetchRecipients} from "../../slices/RecipientSlice";
@@ -49,17 +49,16 @@ export default function SendReportsModal({ isOpen, onClose }: SendReportsModalPr
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-md p-6">
-      <h4 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">
-        Slanje dokumenata
-      </h4>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle>Slanje dokumenata</DialogTitle>
+      </DialogHeader>
 
       {reportItems.length === 0 ? (
-        <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-          Nema odabranih dokumenata
-        </p>
+        <DialogDescription>Nema odabranih dokumenata</DialogDescription>
       ) : (
-        <ul className="mb-4 flex max-h-60 flex-col overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-800">
+        <ul className="flex max-h-60 flex-col overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-800">
           {reportItems.map((item) => (
             <li
               key={item.id}
@@ -76,8 +75,8 @@ export default function SendReportsModal({ isOpen, onClose }: SendReportsModalPr
         </ul>
       )}
 
-      <div className="mb-4">
-        <Label htmlFor="reports-email">Email</Label>
+      <Field className="gap-1.5">
+        <FieldLabel htmlFor="reports-email">Email</FieldLabel>
         <EmailAutocompleteInput
           id="reports-email"
           placeholder="buyer@example.com"
@@ -85,28 +84,30 @@ export default function SendReportsModal({ isOpen, onClose }: SendReportsModalPr
           onChange={setEmail}
           suggestions={recipientEmails}
         />
-      </div>
+      </Field>
 
-      <div className="mb-4">
-        <Checkbox
-          id="reports-separated"
-          label="Odvojeno"
-          checked={effectiveSeparated}
-          onChange={setSeparated}
-          disabled={reportItems.length === 0 || tooManyForSeparate}
-        />
+      <div>
+        <Field orientation="horizontal" data-disabled={reportItems.length === 0 || tooManyForSeparate || undefined}>
+          <Checkbox
+            id="reports-separated"
+            checked={effectiveSeparated}
+            onCheckedChange={setSeparated}
+            disabled={reportItems.length === 0 || tooManyForSeparate}
+          />
+          <FieldLabel htmlFor="reports-separated">Odvojeno</FieldLabel>
+        </Field>
         {tooManyForSeparate && (
-          <p className="mt-1.5 text-gray-500 text-theme-xs dark:text-gray-400">
+          <FieldDescription className="mt-1.5 text-theme-xs">
             Zasebno slanje moguće je za najviše {MAX_SEPARATED_FILES} dokumenata.
-          </p>
+          </FieldDescription>
         )}
       </div>
 
       {sendError && (
-        <p className="mb-4 text-error-500 text-theme-sm">{sendError}</p>
+        <p className="text-theme-sm text-error-500">{sendError}</p>
       )}
 
-      <div className="flex justify-end gap-3">
+      <DialogFooter>
         <Button size="sm" variant="outline" onClick={onClose} disabled={sending}>
           Odustani
         </Button>
@@ -117,7 +118,8 @@ export default function SendReportsModal({ isOpen, onClose }: SendReportsModalPr
         >
           {sending ? "Slanje..." : "Pošalji"}
         </Button>
-      </div>
-    </Modal>
+      </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

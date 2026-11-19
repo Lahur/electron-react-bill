@@ -4,13 +4,13 @@ import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
 import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
-import Badge from "../../components/ui/badge/Badge";
-import Button from "../../components/ui/button/Button";
-import Label from "../../components/form/Label";
-import Input from "../../components/form/input/InputField";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import DatePicker from "../../components/form/date-picker";
-import Checkbox from "../../components/form/input/Checkbox";
+import {Checkbox} from "@/components/ui/checkbox";
 import {DocsIcon} from "../../icons";
+import FormField from "@/components/form/FormField";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {
     createAccountsStatement,
@@ -118,25 +118,24 @@ function CreateAccountsStatementForm({ onCancel, onCreated }: { onCancel: () => 
       <form onSubmit={handleSubmit}>
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <Label htmlFor="amount">Iznos</Label>
-              <Input
+            <FormField label="Iznos" htmlFor="amount" error={errors.amount ? "Iznos mora biti 0 ili veći." : undefined}>
+                <Input
                 type="number"
                 id="amount"
                 min="0"
                 step={0.01}
                 value={form.amount}
                 onChange={(e) => setField("amount", e.target.value)}
-                error={errors.amount}
-                hint={errors.amount ? "Iznos mora biti 0 ili veći." : ""}
-              />
-            </div>
+                    aria-invalid={errors.amount || undefined}
+                />
+            </FormField>
             <div>
               <DatePicker
                 id="date"
                 label="Datum"
                 placeholder="Odaberite datum izvoda"
                 onChange={handleDateChange}
+                  error={errors.date}
               />
               {errors.date && (
                 <p className="mt-1.5 text-xs text-error-500">Datum je obavezan.</p>
@@ -144,24 +143,22 @@ function CreateAccountsStatementForm({ onCancel, onCreated }: { onCancel: () => 
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="description">Opis</Label>
-            <Input
+          <FormField label="Opis" htmlFor="description" error={errors.description ? "Opis je obavezan." : undefined}>
+              <Input
               type="text"
               id="description"
               value={form.description}
               onChange={(e) => setField("description", e.target.value)}
-              error={errors.description}
-              hint={errors.description ? "Opis je obavezan." : ""}
-            />
-          </div>
+                  aria-invalid={errors.description || undefined}
+              />
+          </FormField>
 
-          <div>
-            <Label>Račun</Label>
-            <Button type="button" size="sm" variant="outline" startIcon={<DocsIcon className="h-4 w-4" />} onClick={handlePickBill}>
+          <FormField label="Račun" htmlFor="bill">
+            <Button id="bill" type="button" size="lg" variant="outline" className="w-fit" onClick={handlePickBill}>
+              <DocsIcon className="size-4" />
               {bill ? bill.name : "Odaberite PDF"}
             </Button>
-          </div>
+          </FormField>
 
           {submitError && (
             <p className="text-sm text-error-500">{submitError}</p>
@@ -171,7 +168,7 @@ function CreateAccountsStatementForm({ onCancel, onCreated }: { onCancel: () => 
             <Button type="button" size="sm" variant="outline" onClick={onCancel} disabled={submitting}>
               Odustani
             </Button>
-            <Button type="submit" size="sm" variant="primary" className="ml-auto" disabled={submitting}>
+            <Button type="submit" size="sm" className="ml-auto" disabled={submitting}>
               {submitting ? "Spremanje..." : "Spremi"}
             </Button>
           </div>
@@ -246,7 +243,7 @@ export default function AccountsStatements() {
               Kreiraj izvještaj
             </Button>
           </div>
-          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/3 sm:px-6">
             <div className="max-w-full overflow-x-auto">
               <Table>
                 <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
@@ -283,7 +280,8 @@ export default function AccountsStatements() {
                       <TableCell className="py-3">
                         <Checkbox
                           checked={selectedIds.includes(statement.id)}
-                          onChange={(checked) => toggleSelection(statement.id, checked)}
+                          onCheckedChange={(checked) => toggleSelection(statement.id, checked)}
+                          aria-label="Odaberi izvod"
                           disabled={!!statement.cashWithdrawalBalanceIds && statement.cashWithdrawalBalanceIds.length > 0}
                         />
                       </TableCell>
@@ -305,10 +303,10 @@ export default function AccountsStatements() {
                           <Button
                             size="sm"
                             variant="outline"
-                            startIcon={<DocsIcon className="h-4 w-4" />}
                             onClick={() => handleUploadBill(statement.id)}
                             disabled={uploadingId === statement.id}
                           >
+                            <DocsIcon className="size-4" />
                             {uploadingId === statement.id ? "Učitavanje..." : "Učitaj račun"}
                           </Button>
                         )}
@@ -343,7 +341,7 @@ export default function AccountsStatements() {
                           className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${
                             reportItems.some((item) => item.id === statement.id)
                               ? "border-brand-500 bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400"
-                              : "border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+                              : "border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/3 dark:hover:text-gray-200"
                           }`}
                         >
                           <DocsIcon className="h-5 w-5" />

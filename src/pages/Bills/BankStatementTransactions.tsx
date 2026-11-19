@@ -3,7 +3,7 @@ import {useParams} from "react-router";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
-import Badge from "../../components/ui/badge/Badge";
+import {Badge} from "@/components/ui/badge";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {fetchBankStatements} from "../../slices/BankStatementSlice";
 import {fetchBankTransactionsByStatement} from "../../slices/BankTransactionSlice";
@@ -50,7 +50,7 @@ export default function BankStatementTransactions() {
         description="Popis transakcija bankovnog izvoda."
       />
       <PageBreadcrumb pageTitle={pageTitle} />
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/3 sm:px-6">
         <div className="max-w-full overflow-x-auto">
           <Table>
             <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
