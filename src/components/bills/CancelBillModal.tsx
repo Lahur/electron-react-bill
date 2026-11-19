@@ -1,8 +1,8 @@
 import {useState} from "react";
-import {Modal} from "../ui/modal";
-import Label from "../form/Label";
-import Input from "../form/input/InputField";
-import Button from "../ui/button/Button";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {Field, FieldLabel} from "@/components/ui/field";
+import {Input} from "@/components/ui/input";
 
 interface CancelBillModalProps {
   isOpen: boolean;
@@ -36,18 +36,16 @@ export default function CancelBillModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-md p-6">
-      <h4 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">
-        Storniraj račun
-      </h4>
-
-      <p className="mb-4 text-gray-500 text-theme-sm dark:text-gray-400">
-        Jeste li sigurni da želite stornirati ovaj račun?
-      </p>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle>Storniraj račun</DialogTitle>
+        <DialogDescription>Jeste li sigurni da želite stornirati ovaj račun?</DialogDescription>
+      </DialogHeader>
 
       {needsNewId && (
-        <div className="mb-4">
-          <Label htmlFor="cancel-new-id">Broj storno dokumenta</Label>
+        <Field className="gap-1.5">
+          <FieldLabel htmlFor="cancel-new-id">Broj storno dokumenta</FieldLabel>
           <Input
             id="cancel-new-id"
             type="number"
@@ -56,12 +54,12 @@ export default function CancelBillModal({
             value={newId}
             onChange={(event) => setNewId(event.target.value)}
           />
-        </div>
+        </Field>
       )}
 
-      {error && <p className="mb-4 text-error-500 text-theme-sm">{error}</p>}
+      {error && <p className="text-theme-sm text-error-500">{error}</p>}
 
-      <div className="flex justify-end gap-3">
+      <DialogFooter>
         <Button size="sm" variant="outline" onClick={onClose} disabled={isCancelling}>
           Odustani
         </Button>
@@ -69,11 +67,12 @@ export default function CancelBillModal({
           size="sm"
           onClick={handleConfirm}
           disabled={isCancelling || (needsNewId && !newIdValid)}
-          className="!bg-error-500 hover:!bg-error-600 disabled:!bg-error-300"
+          variant="destructive"
         >
           {isCancelling ? "Storniranje..." : "Storniraj"}
         </Button>
-      </div>
-    </Modal>
+      </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

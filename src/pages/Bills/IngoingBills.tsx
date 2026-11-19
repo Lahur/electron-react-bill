@@ -4,9 +4,9 @@ import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import BillsFilterToolbar from "../../components/bills/BillsFilterToolbar";
 import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
-import Badge from "../../components/ui/badge/Badge";
-import Button from "../../components/ui/button/Button";
-import {Modal} from "../../components/ui/modal";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useModal} from "../../hooks/useModal";
 import {BarcodeIcon, CheckCircleIcon, DocsIcon} from "../../icons";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
@@ -89,7 +89,7 @@ export default function IngoingBills() {
           onReset={() => dispatch(fetchBills())}
         />
 
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/3 sm:px-6">
           <div className="max-w-full overflow-x-auto">
           <Table>
             <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
@@ -170,7 +170,7 @@ export default function IngoingBills() {
                         className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${
                           reportItems.some((item) => item.id === bill.systemId)
                             ? "border-brand-500 bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400"
-                            : "border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+                            : "border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/3 dark:hover:text-gray-200"
                         }`}
                       >
                         <DocsIcon className="h-5 w-5" />
@@ -182,7 +182,7 @@ export default function IngoingBills() {
                           event.stopPropagation();
                           showBarcode(bill.systemId);
                         }}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+                        className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/3 dark:hover:text-gray-200"
                       >
                         <BarcodeIcon className="h-5 w-5" />
                       </button>
@@ -198,7 +198,7 @@ export default function IngoingBills() {
                         className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${
                           bill.documentStatus === DocumentStatusEnum.PlacenUPotpunosti
                             ? "cursor-not-allowed border-gray-200 text-success-500 dark:border-gray-800"
-                            : "border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+                            : "border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/3 dark:hover:text-gray-200"
                         }`}
                       >
                         <CheckCircleIcon className="h-5 w-5" />
@@ -212,12 +212,12 @@ export default function IngoingBills() {
           </div>
         </div>
       </div>
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[500px] m-4">
-        <div className="no-scrollbar relative w-full max-w-[500px] overflow-y-auto rounded-3xl bg-white p-6 dark:bg-gray-900">
-          <h4 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">
-            PDF417 barkod
-          </h4>
-          <div className="flex min-h-[120px] items-center justify-center rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+      <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
+        <DialogContent className="sm:max-w-125">
+          <DialogHeader>
+            <DialogTitle>PDF417 barkod</DialogTitle>
+          </DialogHeader>
+          <div className="flex min-h-30 items-center justify-center rounded-lg border border-gray-200 p-4 dark:border-gray-800">
             {barcodeImage ? (
               <img
                 src={`data:image/png;base64,${barcodeImage}`}
@@ -229,31 +229,31 @@ export default function IngoingBills() {
               </p>
             )}
           </div>
-          <div className="mt-6 flex justify-end">
+          <DialogFooter>
             <Button size="sm" variant="outline" onClick={closeModal}>
               Zatvori
             </Button>
-          </div>
-        </div>
-      </Modal>
-      <Modal isOpen={isConfirmOpen} onClose={closeConfirmModal} className="max-w-[500px] m-4">
-        <div className="no-scrollbar relative w-full max-w-[500px] overflow-y-auto rounded-3xl bg-white p-6 dark:bg-gray-900">
-          <h4 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">
-            Potvrda
-          </h4>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Označiti dokument {billToMarkAsPaid?.fullBillId} kao plaćen?
-          </p>
-          <div className="mt-6 flex justify-end gap-3">
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isConfirmOpen} onOpenChange={(open) => !open && closeConfirmModal()}>
+        <DialogContent className="sm:max-w-125">
+          <DialogHeader>
+            <DialogTitle>Potvrda</DialogTitle>
+            <DialogDescription>
+              Označiti dokument {billToMarkAsPaid?.fullBillId} kao plaćen?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
             <Button size="sm" variant="outline" onClick={closeConfirmModal}>
               Odustani
             </Button>
             <Button size="sm" onClick={handleMarkAsPaid}>
               Potvrdi
             </Button>
-          </div>
-        </div>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

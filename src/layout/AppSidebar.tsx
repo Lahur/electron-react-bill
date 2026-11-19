@@ -1,6 +1,6 @@
 import {type ReactNode, useEffect, useRef, useState} from "react";
 import {Link, useLocation} from "react-router";
-import {BoxIconLine, ChevronDownIcon, DocsIcon, GridIcon, HorizontaLDots} from "../icons";
+import {BoxLineIcon, ChevronDownIcon, DocsIcon, GridIcon, HorizontalDotsIcon} from "../icons";
 import {useSidebarState} from "../hooks/useSidebarState";
 
 type NavItem = {
@@ -16,7 +16,7 @@ const navItems: NavItem[] = [
     subItems: [{ name: "Administracija", path: "/" }],
   },
   {
-    icon: <BoxIconLine />,
+    icon: <BoxLineIcon />,
     name: "Računi",
     subItems: [
       { name: "Novi", path: "/bills/new" },
@@ -97,7 +97,7 @@ export default function AppSidebar() {
                   !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
                 }`}
               >
-                {showLabels ? "Izbornik" : <HorizontaLDots className="size-6" />}
+                {showLabels ? "Izbornik" : <HorizontalDotsIcon className="size-6" />}
               </h2>
               <ul className="flex flex-col gap-4">
                 {navItems.map((nav, index) => (

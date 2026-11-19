@@ -4,7 +4,7 @@ import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import BillsFilterToolbar from "../../components/bills/BillsFilterToolbar";
 import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
-import Badge from "../../components/ui/badge/Badge";
+import {Badge} from "@/components/ui/badge";
 import {DocsIcon} from "../../icons";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {fetchBills, fetchBillsFilter} from "../../slices/B2CBillSlice";
@@ -62,7 +62,7 @@ export default function B2COugoingBills() {
           onReset={() => dispatch(fetchBills())}
         />
 
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/3 sm:px-6">
           <div className="max-w-full overflow-x-auto">
           <Table>
             <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
@@ -142,7 +142,7 @@ export default function B2COugoingBills() {
                       className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${
                         reportItems.some((item) => item.id === bill.systemId)
                           ? "border-brand-500 bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400"
-                          : "border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+                          : "border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/3 dark:hover:text-gray-200"
                       }`}
                     >
                       <DocsIcon className="h-5 w-5" />

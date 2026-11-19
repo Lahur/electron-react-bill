@@ -1,5 +1,5 @@
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
-import Button from "../../../components/ui/button/Button.tsx";
+import {Button} from "@/components/ui/button";
 import type {BillReviewResponse} from "../../../models/dto/BillReviewResponse.ts";
 import {billProfileLabels} from "../../../models/enums/BillProfile";
 import {vatCategoryLabels} from "../../../models/enums/VatCategory";
@@ -101,7 +101,7 @@ export default function ReviewBill({
                 <Button type="button" size="sm" variant="outline" onClick={onBack} disabled={submitting}>
                     Natrag
                 </Button>
-                <Button type="button" size="sm" variant="primary" className="ml-auto" onClick={onConfirm} disabled={submitting}>
+                <Button type="button" size="sm" className="ml-auto" onClick={onConfirm} disabled={submitting}>
                     Potvrdi
                 </Button>
             </div>

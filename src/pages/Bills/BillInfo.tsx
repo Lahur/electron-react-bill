@@ -3,7 +3,7 @@ import {useNavigate, useParams} from "react-router";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
-import Button from "../../components/ui/button/Button";
+import {Button} from "@/components/ui/button";
 import CancelBillModal from "../../components/bills/CancelBillModal";
 import {Table, TableBody, TableCell, TableHeader, TableRow} from "../../components/ui/table";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
@@ -113,7 +113,7 @@ export default function BillInfo() {
           <Button
             size="sm"
             onClick={() => setIsCancelModalOpen(true)}
-            className="!bg-error-500 hover:!bg-error-600"
+            className="bg-error-500! hover:bg-error-600!"
           >
             Storniraj
           </Button>

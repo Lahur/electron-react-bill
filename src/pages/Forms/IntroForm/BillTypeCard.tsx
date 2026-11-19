@@ -1,7 +1,8 @@
 import {useState} from "react";
 import ComponentCard from "../../../components/common/ComponentCard.tsx";
-import Checkbox from "../../../components/form/input/Checkbox.tsx";
-import Button from "../../../components/ui/button/Button.tsx";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Field, FieldLabel} from "@/components/ui/field";
+import {Button} from "@/components/ui/button";
 import {useAppSelector} from "../../../app/hooks";
 
 export type BillType = "B2B_BILL" | "B2C_BILL" | "B2B_REPORT";
@@ -34,13 +35,16 @@ export default function BillTypeCard({ onNext }: { onNext: (billType: BillType) 
                 </div>
                 <div className="flex items-center">
                     {!publishedOnAms && (
-                        <Checkbox
-                            checked={billType === "B2B_REPORT"}
-                            onChange={(checked) => setBillType(checked ? "B2B_REPORT" : "B2C_BILL")}
-                            label="Prijava"
-                        />
+                        <Field orientation="horizontal" className="w-auto">
+                            <Checkbox
+                                id="bill-type-report"
+                                checked={billType === "B2B_REPORT"}
+                                onCheckedChange={(checked) => setBillType(checked ? "B2B_REPORT" : "B2C_BILL")}
+                            />
+                            <FieldLabel htmlFor="bill-type-report">Prijava</FieldLabel>
+                        </Field>
                     )}
-                    <Button size="sm" variant="primary" className="ml-auto" onClick={() => onNext(billType)}>
+                    <Button size="sm" className="ml-auto" onClick={() => onNext(billType)}>
                         Dalje
                     </Button>
                 </div>

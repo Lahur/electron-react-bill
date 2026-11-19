@@ -1,5 +1,5 @@
 import {useState} from "react";
-import Button from "../ui/button/Button";
+import {Button} from "@/components/ui/button";
 import BillsFilterModal from "./BillsFilterModal";
 import {useModal} from "../../hooks/useModal";
 import type {BillSearchParams} from "../../models/dto/BillSearchParams";
@@ -58,22 +58,23 @@ export default function BillsFilterToolbar({onApply, onReset}: BillsFilterToolba
   }
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/[0.03] sm:p-5">
+    <div className="rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/3 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         {hasActiveFilter ? (
           <Button
             variant="outline"
-            startIcon={<FilterIcon className="h-5 w-5" />}
+            size="lg"
             onClick={handleReset}
           >
+            <FilterIcon className="size-5" />
             Očisti filter
           </Button>
         ) : (
           <Button
-            variant="primary"
-            startIcon={<FilterIcon className="h-5 w-5" />}
+            size="lg"
             onClick={openModal}
           >
+            <FilterIcon className="size-5" />
             Filtriraj
           </Button>
         )}

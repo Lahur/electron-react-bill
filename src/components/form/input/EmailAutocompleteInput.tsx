@@ -1,7 +1,11 @@
-import {useMemo, useState} from "react";
-import Input from "./InputField";
-import {Dropdown} from "../../ui/dropdown/Dropdown";
-import {DropdownItem} from "../../ui/dropdown/DropdownItem";
+import {useMemo} from "react";
+import {
+  Autocomplete,
+  AutocompleteContent,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteList,
+} from "@/components/ui/autocomplete";
 
 interface EmailAutocompleteInputProps {
   id?: string;
@@ -18,8 +22,6 @@ export default function EmailAutocompleteInput({
   suggestions,
   placeholder,
 }: EmailAutocompleteInputProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
   const matches = useMemo(() => {
     const query = value.trim().toLowerCase();
     const filtered = query
@@ -31,37 +33,25 @@ export default function EmailAutocompleteInput({
   }, [value, suggestions]);
 
   return (
-    <div className="relative">
-      <Input
-        type="email"
-        id={id}
-        placeholder={placeholder}
-        value={value}
-        onChange={(event) => {
-          onChange(event.target.value);
-          setIsOpen(true);
-        }}
-        onFocus={() => setIsOpen(true)}
-        className="dropdown-toggle"
-      />
-      <Dropdown
-        isOpen={isOpen && matches.length > 0}
-        onClose={() => setIsOpen(false)}
-        className="left-0 right-0 max-h-52 w-full overflow-y-auto"
-      >
-        {matches.map((email) => (
-          <DropdownItem
-            key={email}
-            onItemClick={() => {
-              onChange(email);
-              setIsOpen(false);
-            }}
-            className="block w-full truncate px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white/90"
-          >
-            {email}
-          </DropdownItem>
-        ))}
-      </Dropdown>
-    </div>
+    <Autocomplete
+      items={matches}
+      filter={null}
+      value={value}
+      onValueChange={(next) => onChange(next)}
+      openOnInputClick
+    >
+      <AutocompleteInput id={id} type="email" placeholder={placeholder} />
+      {matches.length > 0 && (
+        <AutocompleteContent>
+          <AutocompleteList>
+            {(email: string) => (
+              <AutocompleteItem key={email} value={email}>
+                {email}
+              </AutocompleteItem>
+            )}
+          </AutocompleteList>
+        </AutocompleteContent>
+      )}
+    </Autocomplete>
   );
 }

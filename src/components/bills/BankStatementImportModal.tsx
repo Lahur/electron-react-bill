@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
-import {Modal} from "../ui/modal";
-import Label from "../form/Label";
-import Checkbox from "../form/input/Checkbox";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Field, FieldLabel} from "@/components/ui/field";
 import EmailAutocompleteInput from "../form/input/EmailAutocompleteInput";
-import Button from "../ui/button/Button";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {fetchRecipients} from "../../slices/RecipientSlice";
 
@@ -36,30 +36,30 @@ export default function BankStatementImportModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-md p-6">
-      <h4 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">
-        Uvoz bankovnih izvoda
-      </h4>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle>Uvoz bankovnih izvoda</DialogTitle>
+        <DialogDescription>
+          {fileCount === 1
+            ? "Odabrana je 1 datoteka."
+            : `Odabrano je ${fileCount} datoteka.`}
+        </DialogDescription>
+      </DialogHeader>
 
-      <p className="mb-4 text-gray-500 text-theme-sm dark:text-gray-400">
-        {fileCount === 1
-          ? "Odabrana je 1 datoteka."
-          : `Odabrano je ${fileCount} datoteka.`}
-      </p>
-
-      <div className="mb-4">
+      <Field orientation="horizontal" data-disabled={isImporting || undefined}>
         <Checkbox
           id="send-statements"
-          label="Pošalji izvode e-poštom"
           checked={sendStatements}
-          onChange={setSendStatements}
+          onCheckedChange={setSendStatements}
           disabled={isImporting}
         />
-      </div>
+        <FieldLabel htmlFor="send-statements">Pošalji izvode e-poštom</FieldLabel>
+      </Field>
 
       {sendStatements && (
-        <div className="mb-4">
-          <Label htmlFor="statements-email">Email</Label>
+        <Field className="gap-1.5">
+          <FieldLabel htmlFor="statements-email">Email</FieldLabel>
           <EmailAutocompleteInput
             id="statements-email"
             placeholder="buyer@example.com"
@@ -67,10 +67,10 @@ export default function BankStatementImportModal({
             onChange={setEmail}
             suggestions={recipientEmails}
           />
-        </div>
+        </Field>
       )}
 
-      <div className="flex justify-end gap-3">
+      <DialogFooter>
         <Button size="sm" variant="outline" onClick={onClose} disabled={isImporting}>
           Odustani
         </Button>
@@ -81,7 +81,8 @@ export default function BankStatementImportModal({
         >
           {isImporting ? "Uvoz u tijeku..." : "Uvezi"}
         </Button>
-      </div>
-    </Modal>
+      </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
